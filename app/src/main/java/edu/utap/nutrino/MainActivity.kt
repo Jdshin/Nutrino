@@ -3,6 +3,7 @@ package edu.utap.nutrino
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.FragmentTransaction
+import edu.utap.nutrino.ui.MainFragment
 
 class MainActivity : AppCompatActivity() {
 

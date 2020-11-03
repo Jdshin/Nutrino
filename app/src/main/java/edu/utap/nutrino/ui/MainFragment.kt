@@ -1,15 +1,16 @@
-package edu.utap.nutrino
+package edu.utap.nutrino.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import edu.utap.nutrino.R
 
 class MainFragment : Fragment(){
 
     companion object{
-        fun newInstance() : MainFragment{
+        fun newInstance() : MainFragment {
             return MainFragment()
         }
     }
