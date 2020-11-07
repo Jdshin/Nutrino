@@ -1,11 +1,9 @@
 package edu.utap.nutrino.ui
 
-import android.provider.Settings.Global.getString
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import edu.utap.nutrino.R
 import edu.utap.nutrino.api.Recipe
 import edu.utap.nutrino.api.SpoonApi
 import edu.utap.nutrino.api.SpoonRepository
@@ -20,7 +18,7 @@ class MainViewModel : ViewModel() {
 
     fun netRecipes(apiKey : String){
         viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            recipeResults.postValue(repository.getRecipes("complexSearch", apiKey, "1"))
+            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "1"))
         }
     }
 

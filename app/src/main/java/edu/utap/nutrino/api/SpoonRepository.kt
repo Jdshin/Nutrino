@@ -2,8 +2,8 @@ package edu.utap.nutrino.api
 
 class SpoonRepository(private val spoonApi : SpoonApi) {
 
-    suspend fun getRecipes (search_by : String, apiKey : String, number : String) : List<Recipe>? {
-        return spoonApi.getRecipes(search_by, apiKey, number).results
+    //TODO Update arguments for getRecipes
+    suspend fun getRecipeEndpoint (apiKey : String, number : String) : List<Recipe>? {
+        return spoonApi.getRecipeEndpoint(apiKey, number, null, null, null, null, null, null, null).results
     }
-
 }
