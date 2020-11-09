@@ -18,7 +18,7 @@ class MainViewModel : ViewModel() {
 
     fun netRecipes(apiKey : String){
         viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "1"))
+            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "5"))
         }
     }
 
