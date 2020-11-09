@@ -12,6 +12,7 @@ import edu.utap.nutrino.R
 class MainFragment : Fragment() {
 
     private val viewModel : MainViewModel by activityViewModels()
+    private val recipeListFragTag = "recipeListTag"
 
     companion object{
         fun newInstance() : MainFragment {
@@ -41,6 +42,11 @@ class MainFragment : Fragment() {
     private fun initClickListeners(getRecipeBut : Button, mealPlanBut : Button, profileBut : Button, settingsBut : Button) {
         getRecipeBut.setOnClickListener{
             viewModel.netRecipes(getString(R.string.Spoonacular_API_KEY))
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_container, RecipeListFragment.newInstance())
+                .addToBackStack(recipeListFragTag)
+                .commit()
         }
 
         mealPlanBut.setOnClickListener{

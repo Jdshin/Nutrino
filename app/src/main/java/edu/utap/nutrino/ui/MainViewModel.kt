@@ -22,7 +22,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun observeRecipes() : LiveData<List<Recipe>>?{
+    fun observeRecipes() : LiveData<List<Recipe>>{
         return recipeResults
     }
 }
