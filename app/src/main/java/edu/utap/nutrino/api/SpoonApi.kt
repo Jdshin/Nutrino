@@ -1,5 +1,6 @@
 package edu.utap.nutrino.api
 
+import android.net.wifi.hotspot2.pps.Credential
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,6 +32,12 @@ interface SpoonApi {
         @Query("addRecipeNutrition") addRecipeNutrition : Boolean?,
         @Query("titleMatch") titleMatch : String?,
     ) : RecipeResponse
+
+    /* In order to use some of the endpoints in Spoonacular, need to get a unique username and hash from spoonacular by sending POST request for usercredentials,
+    need to store user credentials either through shared preferences or firebase storage, prob better on shared prefs for speed.
+     */
+    @POST("/users/connect")
+    suspend fun connectUser() : UserCreds
 
     //TODO need meal planning endpoint call : https://spoonacular.com/food-api/docs#Generate-Meal-Plan
     //TODO need to connect user to spoonacular : https://spoonacular.com/food-api/docs#Connect-User
