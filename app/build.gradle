@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -64,4 +65,10 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:26.0.0')
+    implementation "com.google.firebase:firebase-analytics:17.2.3"
+    implementation "com.firebaseui:firebase-ui-auth:6.2.0"
+    implementation "com.google.firebase:firebase-auth-ktx:19.2.0"
 }
