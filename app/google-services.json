@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "82261894810",
+    "firebase_url": "https://nutrino-cb95c.firebaseio.com",
+    "project_id": "nutrino-cb95c",
+    "storage_bucket": "nutrino-cb95c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82261894810:android:cc678caa068071c6922123",
+        "android_client_info": {
+          "package_name": "edu.utap.nutrino"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82261894810-oi39acn6usluhacfobli9sr4g042iqt1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.utap.nutrino",
+            "certificate_hash": "14848e2ab8a774f2dbd77a273b1ff0ed72070c4f"
+          }
+        },
+        {
+          "client_id": "82261894810-md5vqaord1vvko9fln80e9bg86njrv62.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA7tGXtXIgwAVacC1LjLp8sNGj2VUoirA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82261894810-md5vqaord1vvko9fln80e9bg86njrv62.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
