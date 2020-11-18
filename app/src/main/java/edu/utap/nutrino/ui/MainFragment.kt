@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
+import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
 
 class MainFragment : Fragment() {
@@ -28,7 +29,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.main_fragment,container, false)
+        return inflater.inflate(R.layout.main_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,7 +53,13 @@ class MainFragment : Fragment() {
 
     }
 
-    private fun initClickListeners(getRecipeBut : Button, mealPlanBut : Button, profileBut : Button, settingsBut : Button, logoutBut: Button) {
+    private fun initClickListeners(
+        getRecipeBut: Button,
+        mealPlanBut: Button,
+        profileBut: Button,
+        settingsBut: Button,
+        logoutBut: Button
+    ) {
         getRecipeBut.setOnClickListener{
             viewModel.netRecipes(getString(R.string.Spoonacular_API_KEY))
             parentFragmentManager
@@ -76,6 +83,8 @@ class MainFragment : Fragment() {
 
         logoutBut.setOnClickListener{
             AuthUI.getInstance().signOut(requireContext())
+            activity!!.supportFragmentManager.beginTransaction().remove(this).commit()
+            activity!!.recreate()
         }
     }
 }
