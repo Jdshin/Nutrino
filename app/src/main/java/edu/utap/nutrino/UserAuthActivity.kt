@@ -8,6 +8,11 @@ import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 // This class was inspired by Flipped Classroom #8 but with modifications
 class UserAuthActivity : AppCompatActivity() {
@@ -27,10 +32,11 @@ class UserAuthActivity : AppCompatActivity() {
         }
 
         // Create and launch sign-in intent
+        //TODO implement smart lock if there is time
         startActivityForResult(
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
+                .setAvailableProviders(providers).setIsSmartLockEnabled(false)
                 .build(),
             rcSignIn
         )
@@ -40,6 +46,11 @@ class UserAuthActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == rcSignIn) {
             val response = IdpResponse.fromResultIntent(data)
+            if (Firebase.auth.currentUser != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    MainActivity.userEmail = Firebase.auth.currentUser!!.email.toString()
+                }
+            }
 
             Log.d(javaClass.simpleName, "activity result $resultCode")
             if (resultCode == Activity.RESULT_OK) {

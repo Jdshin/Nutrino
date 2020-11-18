@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "Nutrino"
         const val userAuthRequestCode = 10
+        var userEmail = ""
     }
     private lateinit var mainFragment : MainFragment
 
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             userAuthRequestCode -> {
                 if (resultCode == RESULT_OK) {
+                    Log.i("User Email: ", userEmail)
                     mainFragment = MainFragment.newInstance()
                     initMainFragment()
                 } else {
