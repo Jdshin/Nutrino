@@ -10,8 +10,8 @@ class SpoonRepository(private val spoonApi : SpoonApi) {
         return spoonApi.getRecipeEndpoint(apiKey, number, null, null, null, null, null, null, null).results
     }
 
-    suspend fun connectUser () : UserCreds {
-        val userCred = spoonApi.connectUser()
+    suspend fun connectUser (body : SpoonApi.UserPostData) : UserCreds {
+        val userCred = spoonApi.connectUser(body)
         Log.i("Username : ", userCred.username)
         Log.i("User Hash", userCred.hash)
         return userCred

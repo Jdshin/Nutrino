@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
+import edu.utap.nutrino.api.SpoonApi
 
 class MainFragment : Fragment() {
 
@@ -30,6 +32,11 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (MainActivity.userEmail.isNotEmpty()){
+            var userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
+            viewModel.connectUser(userPostData)
+        }
 
         var getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
         var mealPlanBut = view.findViewById<Button>(R.id.mealPlanBut)
