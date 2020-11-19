@@ -29,9 +29,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun connectUser(body : SpoonApi.UserPostData) {
+    fun connectUser(body : SpoonApi.UserPostData, apiKey: String) {
         viewModelScope.launch(context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            userCreds = repository.connectUser(body)
+            userCreds = repository.connectUser(body, apiKey)
             db.collection(body.email).document("UserCreds").set(userCreds)
             Log.i("Username: ", userCreds.username)
             Log.i("Hash: ", userCreds.hash)

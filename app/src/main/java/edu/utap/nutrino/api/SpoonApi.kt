@@ -39,9 +39,12 @@ interface SpoonApi {
     /* In order to use some of the endpoints in Spoonacular, need to get a unique username and hash from spoonacular by sending POST request for usercredentials,
     need to store user credentials either through shared preferences or firebase storage, prob better on shared prefs for speed.
      */
-    @Headers("Content-Type: application/json")
+
     @POST("/users/connect")
-    suspend fun connectUser(@Body body : UserPostData) : UserCreds
+    suspend fun connectUser(
+            @Body body : UserPostData,
+            @Query ("apiKey") apiKey: String
+    ) : UserCreds
 
     //TODO need meal planning endpoint call : https://spoonacular.com/food-api/docs#Generate-Meal-Plan
     //TODO need to connect user to spoonacular : https://spoonacular.com/food-api/docs#Connect-User

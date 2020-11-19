@@ -35,7 +35,7 @@ class MainFragment : Fragment() {
 
         if (MainActivity.userEmail.isNotEmpty()){
             var userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
-            viewModel.connectUser(userPostData)
+            viewModel.connectUser(userPostData, getString(R.string.Spoonacular_API_KEY))
         }
 
         var getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
