@@ -27,6 +27,7 @@ interface SpoonApi {
     suspend fun getRecipeEndpoint (
         @Query("apiKey") apiKey : String,
         @Query("number") number : String,
+        @Query("query") query : String?,
         @Query("cuisine") cuisineListString : String?,
         @Query("excludeCuisine") excludeCuisineListString : String?,
         @Query("diet") diet : String?,

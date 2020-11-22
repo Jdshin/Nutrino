@@ -17,7 +17,6 @@ import edu.utap.nutrino.api.SpoonApi
 class MainFragment : Fragment() {
 
     private val viewModel : MainViewModel by activityViewModels()
-    private val recipeListFragTag = "recipeListTag"
 
     companion object{
         fun newInstance() : MainFragment {
@@ -67,11 +66,10 @@ class MainFragment : Fragment() {
         logoutBut: Button
     ) {
         getRecipeBut.setOnClickListener{
-            viewModel.netRecipes(getString(R.string.Spoonacular_API_KEY))
             parentFragmentManager
                 .beginTransaction()
-                .replace(R.id.main_container, RecipeListFragment.newInstance())
-                .addToBackStack(recipeListFragTag)
+                .replace(R.id.main_container, RecipeSearchFragment.newInstance())
+                .addToBackStack(MainActivity.recipeSearchFragTag)
                 .commit()
         }
 

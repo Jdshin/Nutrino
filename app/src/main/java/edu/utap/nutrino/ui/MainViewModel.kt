@@ -23,9 +23,9 @@ class MainViewModel : ViewModel() {
 
     private val recipeResults = MutableLiveData<List<Recipe>>()
 
-    fun netRecipes(apiKey : String){
+    fun netRecipes(apiKey : String, searchText: String) {
         viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "5"))
+            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "5", searchText))
         }
     }
 

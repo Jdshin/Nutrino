@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Nutrino</string>
-    <string name="Spoonacular_API_KEY"></string>
+    <string name="Spoonacular_API_KEY">e3894d0733c94e9db7bf789b966b0236</string>
 </resources>
