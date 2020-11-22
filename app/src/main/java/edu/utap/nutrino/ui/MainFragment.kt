@@ -12,6 +12,7 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
+import edu.utap.nutrino.api.SpoonApi
 
 class MainFragment : Fragment() {
 
@@ -42,6 +43,11 @@ class MainFragment : Fragment() {
         }
         else {
             welcomeTV.text = "Hello, " + displayName + "!"
+        }
+      
+        if (MainActivity.userEmail.isNotEmpty()){
+            var userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
+            viewModel.connectUser(userPostData, getString(R.string.Spoonacular_API_KEY))
         }
 
         var getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
