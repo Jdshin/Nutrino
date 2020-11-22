@@ -28,18 +28,19 @@ class UserAuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         if (FirebaseAuth.getInstance().currentUser != null) {
-            AuthUI.getInstance().signOut(this)
+            setResult(RESULT_OK)
+            finish()
+        } else {
+            // Create and launch sign-in intent. TODO: Implement smart lock if there is time.
+            startActivityForResult(
+                AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setAvailableProviders(providers)
+                    .setIsSmartLockEnabled(false)
+                    .build(),
+                rcSignIn
+            )
         }
-
-        // Create and launch sign-in intent
-        //TODO implement smart lock if there is time
-        startActivityForResult(
-            AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers).setIsSmartLockEnabled(false)
-                .build(),
-            rcSignIn
-        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
