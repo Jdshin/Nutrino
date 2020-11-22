@@ -1,6 +1,7 @@
 package edu.utap.nutrino.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +41,8 @@ class RecipeSearchFragment : Fragment() {
 
     private fun setRecipeSearchBut(editText: EditText, button: Button) {
         button.setOnClickListener{
-            viewModel.netRecipes(editText.text.toString(), getString(R.string.Spoonacular_API_KEY))
+            Log.i("Search Text: ", editText.text.toString())
+            viewModel.netRecipes(getString(R.string.Spoonacular_API_KEY), editText.text.toString())
             parentFragmentManager
                     .beginTransaction()
                     .replace(R.id.main_container, RecipeListFragment.newInstance())
