@@ -45,6 +45,13 @@
                 android:id="@+id/recipe_title_TV"
                 android:text="Recipe name" />
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/recipe_fav_but"
+                android:src="@drawable/ic_favorite_border_black_24dp"/>
+
         </FrameLayout>
 
 
