@@ -16,6 +16,8 @@ class MainActivity : AppCompatActivity() {
         const val recipeListFragTag = "recipeListTag"
         const val recipeSearchFragTag = "recipeSearchFragTag"
         const val userAuthRequestCode = 10
+        var recipeSearchFragTag = "recipeSearchTag"
+        var recipeListFragTag = "recipeListTag"
         var userEmail = ""
     }
 

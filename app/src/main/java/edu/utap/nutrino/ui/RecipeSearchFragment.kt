@@ -29,7 +29,7 @@ class RecipeSearchFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.recipe_search_fragment, container, false)
+        return inflater.inflate(R.layout.recipe_search_frag, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

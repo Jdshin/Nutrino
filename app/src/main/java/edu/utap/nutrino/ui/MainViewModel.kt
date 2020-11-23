@@ -1,6 +1,7 @@
 package edu.utap.nutrino.ui
 
 import android.util.Log
+import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
