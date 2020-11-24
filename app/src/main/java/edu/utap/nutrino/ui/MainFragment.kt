@@ -37,6 +37,7 @@ class MainFragment : Fragment() {
 
         var welcomeTV = view.findViewById<TextView>(R.id.welcomeTV)
         var displayName = FirebaseAuth.getInstance().currentUser!!.displayName
+        MainActivity.userEmail = FirebaseAuth.getInstance().currentUser!!.email.toString()
         if (displayName.isNullOrBlank()) {
             welcomeTV.text = "Hello!"
         }
@@ -48,6 +49,8 @@ class MainFragment : Fragment() {
             var userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
             viewModel.connectUser(userPostData, getString(R.string.Spoonacular_API_KEY))
         }
+
+        viewModel.initFireBaseRefs()
 
         var getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
         var mealPlanBut = view.findViewById<Button>(R.id.mealPlanBut)

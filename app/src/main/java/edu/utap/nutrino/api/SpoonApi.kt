@@ -35,6 +35,7 @@ interface SpoonApi {
         @Query("addRecipeInformation") addRecipeInformation : Boolean?,
         @Query("addRecipeNutrition") addRecipeNutrition : Boolean?,
         @Query("titleMatch") titleMatch : String?,
+        @Query("fillIngredients") fillIngredients : Boolean?
     ) : RecipeResponse
 
     /* In order to use some of the endpoints in Spoonacular, need to get a unique username and hash from spoonacular by sending POST request for usercredentials,
