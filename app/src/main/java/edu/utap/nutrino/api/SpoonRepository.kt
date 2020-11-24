@@ -18,7 +18,7 @@ class SpoonRepository(private val spoonApi : SpoonApi) {
             addRecipeInformation = true,
             addRecipeNutrition = true,
             null,
-            true).results
+            fillIngredients = true).results
     }
 
     suspend fun connectUser (body: SpoonApi.UserPostData, apiKey: String) : UserCreds {
