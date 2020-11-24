@@ -1,16 +1,16 @@
 package edu.utap.nutrino.ui
 
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.util.Log
-import android.widget.EditText
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
-import com.google.gson.annotations.SerializedName
 import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.api.Recipe
 import edu.utap.nutrino.api.SpoonApi
@@ -55,6 +55,19 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch (viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("FavoriteRecipes").document(recipe.key.toString()).set(recipe)
         }
+    }
+
+    fun doOneRecipe(context : Context, recipe: Recipe) {
+        val oneRecipeIntent = Intent(context, OneRecipeActivity::class.java)
+        val extras = Bundle()
+        extras.putString(RecipeListAdapter.recipeTitleKey, recipe.title)
+        extras.putString(RecipeListAdapter.recipeScoreKey, recipe.spoonacularScore.toString())
+        extras.putString(RecipeListAdapter.recipeReadyTimeKey, recipe.readyInMinutes.toString())
+        extras.putString(RecipeListAdapter.recipeSummaryKey, recipe.summary)
+        Log.i("Recipe Summary: ", recipe.summary)
+        extras.putString(RecipeListAdapter.recipeImageUrlKey, recipe.imageURL)
+        oneRecipeIntent.putExtras(extras)
+        ContextCompat.startActivity(context, oneRecipeIntent, extras)
     }
 
     fun observeRecipes() : LiveData<List<Recipe>>{
