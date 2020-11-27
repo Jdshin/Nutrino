@@ -11,10 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.utap.nutrino.R
 import edu.utap.nutrino.api.RecipeIngredients
 import edu.utap.nutrino.ui.MainViewModel
-import org.w3c.dom.Text
 
-class OneRecipeIngredientsListAdapter(private val viewModel: MainViewModel)
-    : ListAdapter<RecipeIngredients, OneRecipeIngredientsListAdapter.ViewHolder>(RecipeIngredientsDiff()) {
+class OneRecipeIngredientsAdapter(private val viewModel: MainViewModel)
+    : ListAdapter<RecipeIngredients, OneRecipeIngredientsAdapter.ViewHolder>(RecipeIngredientsDiff()) {
 
     inner class ViewHolder (recipeView : View) : RecyclerView.ViewHolder(recipeView) {
 
