@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         const val TAG = "Nutrino"
         const val recipeListFragTag = "recipeListTag"
         const val recipeSearchFragTag = "recipeSearchFragTag"
+        const val userProfileFragTag = "userProfileFragTag"
         const val userAuthRequestCode = 10
         var userEmail = ""
         var spoonApiKey = ""

@@ -7,7 +7,7 @@ import androidx.security.crypto.MasterKeys
 
 class SecretsManager {
     companion object {
-        // "spoonacular_api_key_1" is an actual key value in the EncryptedSharedPreferences
+        // "spoonacular_api_key_1" is an actual key value in the EncryptedSharedPreferences (there may be multiple possible keys for same API)
         const val spoonacular_api_key = "spoonacular_api_key_1"
         // const val spoonacular_api_key = "spoonacular_api_key_2"
     }

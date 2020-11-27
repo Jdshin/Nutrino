@@ -81,7 +81,11 @@ class MainFragment : Fragment() {
         }
 
         profileBut.setOnClickListener{
-
+            parentFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.main_container, UserProfileFragment.newInstance())
+                    .addToBackStack(MainActivity.userProfileFragTag)
+                    .commit()
         }
 
         settingsBut.setOnClickListener{
