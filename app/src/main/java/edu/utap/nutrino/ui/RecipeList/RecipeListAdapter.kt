@@ -1,4 +1,4 @@
-package edu.utap.nutrino.ui
+package edu.utap.nutrino.ui.RecipeList
 
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.utap.nutrino.R
 import edu.utap.nutrino.api.Recipe
 import edu.utap.nutrino.glide.Glide
+import edu.utap.nutrino.ui.MainViewModel
 import edu.utap.nutrino.ui.OneRecipe.OneRecipeFragment
 
 
