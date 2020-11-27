@@ -8,6 +8,7 @@ import android.util.Property
 import androidx.fragment.app.FragmentTransaction
 import edu.utap.nutrino.ui.MainFragment
 import java.util.*
+import edu.utap.nutrino.SecretsManager.Companion.spoonacular_api_key
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         const val recipeSearchFragTag = "recipeSearchFragTag"
         const val userAuthRequestCode = 10
         var userEmail = ""
+        var spoonApiKey = ""
     }
 
     private lateinit var mainFragment: MainFragment
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity() {
             userAuthRequestCode -> {
                 if (resultCode == RESULT_OK) {
                     Log.i("User Email: ", userEmail)
+                    spoonApiKey = SecretsManager().getValueFromKey(spoonacular_api_key, applicationContext)
                     mainFragment = MainFragment.newInstance()
                     initMainFragment()
                 } else {
@@ -45,10 +48,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun initMainFragment() {
         supportFragmentManager
-            .beginTransaction()
-            .add(R.id.main_container, mainFragment)
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .commit()
+                .beginTransaction()
+                .add(R.id.main_container, mainFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit()
     }
 
     private fun doSignIn() {

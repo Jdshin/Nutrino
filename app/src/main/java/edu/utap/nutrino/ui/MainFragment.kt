@@ -47,7 +47,7 @@ class MainFragment : Fragment() {
       
         if (MainActivity.userEmail.isNotEmpty()){
             var userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
-            viewModel.connectUser(userPostData, getString(R.string.Spoonacular_API_KEY))
+            viewModel.connectUser(userPostData, MainActivity.spoonApiKey)
         }
 
         viewModel.initFireBaseRefs()
