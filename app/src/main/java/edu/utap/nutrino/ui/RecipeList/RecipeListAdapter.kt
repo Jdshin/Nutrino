@@ -23,6 +23,7 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
         private var recipeTitleTV = recipeView.findViewById<TextView>(R.id.recipe_title_TV)
         private var recipeIV = recipeView.findViewById<ImageView>(R.id.recipe_pic_IV)
         private var recipeFavIV = recipeView.findViewById<ImageView>(R.id.recipe_fav_but)
+        private var recipeCartIV = recipeView.findViewById<ImageView>(R.id.add_to_cart_but)
 
         fun bind (recipe : Recipe) {
             recipeTitleTV.text = recipe.title
@@ -32,6 +33,11 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
             recipeFavIV.setOnClickListener{
                 viewModel.addFavRecipe(recipe)
                 recipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+            }
+            recipeCartIV.setOnClickListener{
+                viewModel.addToShoppingCart(recipe)
+                recipeCartIV.setImageResource(R.drawable.ic_check_mark)
+                viewModel.updateShoppingCart()
             }
         }
     }

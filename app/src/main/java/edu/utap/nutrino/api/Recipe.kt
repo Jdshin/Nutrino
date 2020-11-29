@@ -1,7 +1,6 @@
 package edu.utap.nutrino.api
 
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
 data class Recipe (
     @SerializedName("id")
@@ -28,18 +27,16 @@ data class NutritionInfo (
         @SerializedName("nutrients")
         val nutrients : List<Nutrient>,
         @SerializedName("ingredients")
-        val ingredients : List<RecipeIngredients>
+        val ingredients : List<RecipeIngredient>
 )
 
-data class RecipeIngredients (
+data class RecipeIngredient (
         @SerializedName("name")
         val name : String,
         @SerializedName("amount")
         val amount : Double,
         @SerializedName("unit")
-        val unit : String,
-        @SerializedName("nutrients")
-        val nutrients : List<Nutrient>
+        val unit : String
 )
 
 data class Nutrient (

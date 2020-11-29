@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import edu.utap.nutrino.R
-import edu.utap.nutrino.api.RecipeIngredients
+import edu.utap.nutrino.api.RecipeIngredient
 import edu.utap.nutrino.ui.MainViewModel
 
 class OneRecipeIngredientsAdapter(private val viewModel: MainViewModel)
-    : ListAdapter<RecipeIngredients, OneRecipeIngredientsAdapter.ViewHolder>(RecipeIngredientsDiff()) {
+    : ListAdapter<RecipeIngredient, OneRecipeIngredientsAdapter.ViewHolder>(RecipeIngredientsDiff()) {
 
     inner class ViewHolder (recipeView : View) : RecyclerView.ViewHolder(recipeView) {
 
@@ -21,8 +21,8 @@ class OneRecipeIngredientsAdapter(private val viewModel: MainViewModel)
         private val ingredientCB = recipeView.findViewById<CheckBox>(R.id.one_recipe_step_checkbox)
         private val ingredientTV = recipeView.findViewById<TextView>(R.id.one_recipe_step_TV)
 
-        fun bind (recipeIngredients: RecipeIngredients) {
-            var ingredientName = recipeIngredients.name.substring(0,1).toUpperCase() + recipeIngredients.name.substring(1)
+        fun bind (recipeIngredient: RecipeIngredient) {
+            var ingredientName = recipeIngredient.name.substring(0,1).toUpperCase() + recipeIngredient.name.substring(1)
             ingredientTV.text = ingredientName
         }
     }
@@ -39,12 +39,12 @@ class OneRecipeIngredientsAdapter(private val viewModel: MainViewModel)
         holder.bind(getItem(position))
     }
 
-    class RecipeIngredientsDiff : DiffUtil.ItemCallback<RecipeIngredients>() {
-        override fun areItemsTheSame(oldItem: RecipeIngredients, newItem: RecipeIngredients): Boolean {
+    class RecipeIngredientsDiff : DiffUtil.ItemCallback<RecipeIngredient>() {
+        override fun areItemsTheSame(oldItem: RecipeIngredient, newItem: RecipeIngredient): Boolean {
             return oldItem.name == newItem.name
         }
 
-        override fun areContentsTheSame(oldItem: RecipeIngredients, newItem: RecipeIngredients): Boolean {
+        override fun areContentsTheSame(oldItem: RecipeIngredient, newItem: RecipeIngredient): Boolean {
             return oldItem.amount == newItem.amount
                     && oldItem.unit == newItem.unit
         }

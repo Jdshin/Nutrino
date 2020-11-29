@@ -43,6 +43,16 @@
         app:layout_constraintTop_toBottomOf="@+id/savedRecipeBut"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/shoppingCartBut"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shopping Cart"
+        android:id="@+id/shoppingCartBut"
+        app:layout_constraintTop_toBottomOf="@+id/profileBut"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/logoutBut"/>
 
     <Button
@@ -50,7 +60,7 @@
         android:layout_height="wrap_content"
         android:text="Log Out"
         android:id="@+id/logoutBut"
-        app:layout_constraintTop_toBottomOf="@+id/profileBut"
+        app:layout_constraintTop_toBottomOf="@+id/shoppingCartBut"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

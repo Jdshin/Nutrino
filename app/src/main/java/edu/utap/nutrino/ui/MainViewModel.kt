@@ -1,10 +1,6 @@
 package edu.utap.nutrino.ui
 
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,20 +8,22 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.utap.nutrino.MainActivity
-import edu.utap.nutrino.api.Recipe
-import edu.utap.nutrino.api.SpoonApi
-import edu.utap.nutrino.api.SpoonRepository
-import edu.utap.nutrino.api.UserCreds
+import edu.utap.nutrino.api.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
     private val spoonApi = SpoonApi.create()
     private val repository = SpoonRepository(spoonApi)
+    private val db : FirebaseFirestore = FirebaseFirestore.getInstance()
+
     private val recipeResults = MutableLiveData<List<Recipe>>()
     private val savedRecipeResults = MutableLiveData<List<Recipe>>()
-    private val db : FirebaseFirestore = FirebaseFirestore.getInstance()
     private val savedRecipeList : MutableList<Recipe> = mutableListOf<Recipe>()
+
+    private val shoppingCart = MutableLiveData<List<String>>()
+    private val shoppingCartList = mutableListOf<String>()
+    private val shoppingCartListMap = mutableMapOf<String, List<RecipeIngredient>>()
 
     private lateinit var userCreds : UserCreds
     private lateinit var userDocRef : DocumentReference
@@ -65,12 +63,23 @@ class MainViewModel : ViewModel() {
         savedRecipeResults.postValue(savedRecipeList)
     }
 
-    fun setOneRecipe(recipe : Recipe) {
-        oneRecipe = recipe
+    fun addToShoppingCart(recipe: Recipe) {
+        shoppingCartListMap[recipe.key.toString()] = recipe.nutrition.ingredients
     }
 
-    fun getOneRecipe() : Recipe {
-        return oneRecipe
+    fun observeShoppingCart() : LiveData<List<String>> {
+        return shoppingCart
+    }
+
+    fun updateShoppingCart() {
+        shoppingCartListMap.values.forEach { list ->
+            list.map { ingredient ->
+                if (!shoppingCartList.contains(ingredient.name)) {
+                    shoppingCartList.add(ingredient.name)
+                    shoppingCart.postValue(shoppingCartList)
+                }
+            }
+        }
     }
 
     fun observeRecipes() : LiveData<List<Recipe>>{
@@ -79,5 +88,13 @@ class MainViewModel : ViewModel() {
 
     fun observeSavedRecipes() : LiveData<List<Recipe>> {
         return savedRecipeResults
+    }
+
+    fun setOneRecipe(recipe : Recipe) {
+        oneRecipe = recipe
+    }
+
+    fun getOneRecipe() : Recipe {
+        return oneRecipe
     }
 }
