@@ -27,7 +27,7 @@
     <string name="primal_info">Very similar to Paleo, except dairy is allowed - think raw and full fat milk, butter, ghee, etc.</string>
     <string name="whole30_info">Allowed ingredients include meat, fish/seafood, eggs, vegetables, fresh fruit, coconut oil, olive oil, small amounts of dried fruit and nuts/seeds. Ingredients not allowed include added sweeteners (natural and artificial, except small amounts of fruit juice), dairy (except clarified butter or ghee), alcohol, grains, legumes (except green beans, sugar snap peas, and snow peas), and food additives, such as carrageenan, MSG, and sulfites.</string>
 
-    <string name="diet_info_cancel">Got it, thanks!</string>
+    <string name="diet_info_cancel">Got it!</string>
     <string name="diet_update_cancel">Cancel</string>
     <string name="diet_update_confirm">Save</string>
 

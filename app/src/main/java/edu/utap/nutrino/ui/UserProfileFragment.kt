@@ -2,26 +2,28 @@ package edu.utap.nutrino.ui
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.GridView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.color.MaterialColors.getColor
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
 import kotlinx.android.synthetic.main.user_profile_frag.*
+import java.util.*
+
 
 class UserProfileFragment : Fragment() {
 
-    private val dietTypes: Array<String> by lazy {
-        resources.getStringArray(R.array.diet_type)
-    }
+    private val defaultDiet = "Omnivore"
+    private lateinit var dietTypeAdapter: ArrayAdapter<CharSequence>
+    private lateinit var intolerancesAdapter: ArrayAdapter<CharSequence>
 
     companion object {
         fun newInstance() : UserProfileFragment {
@@ -48,7 +50,7 @@ class UserProfileFragment : Fragment() {
             userProfileTV.text = displayName + "'s " + "Profile"
         }
 
-        val dietTypeAdapter = ArrayAdapter.createFromResource(
+        dietTypeAdapter = ArrayAdapter.createFromResource(
             context!!,
             R.array.diet_type,
             android.R.layout.simple_spinner_item
@@ -60,7 +62,7 @@ class UserProfileFragment : Fragment() {
             giveDietInfo()
         }
 
-        val intolerancesAdapter = ArrayAdapter.createFromResource(
+        intolerancesAdapter = ArrayAdapter.createFromResource(
             context!!,
             R.array.intolerance_candidates,
             android.R.layout.simple_list_item_multiple_choice
@@ -78,7 +80,7 @@ class UserProfileFragment : Fragment() {
                 intolerancesGrid.setItemChecked(i, false)
             }
             // Set diet type back to default
-            diet_type_spinner.setSelection(0)
+            diet_type_spinner.setSelection(mapDietToIndex(defaultDiet))
         }
 
         save_button.setOnClickListener {
@@ -92,10 +94,11 @@ class UserProfileFragment : Fragment() {
                     DialogInterface.OnClickListener { dialog, id ->
                         updateProfile()
                     })
-            // Create the AlertDialog object and return it
+            // Show the AlertDialog object
             builder.create().show()
         }
 
+        // Initialize profile from preset settings, if available
         presentProfile()
     }
 
@@ -117,7 +120,7 @@ class UserProfileFragment : Fragment() {
             "Paleo" -> dietInfoString = R.string.paleo_info
             "Primal" -> dietInfoString = R.string.primal_info
             "Whole30" -> dietInfoString = R.string.whole30_info
-            else -> { // Spinner should be on "Diet Type?"
+            else -> { // Spinner should be on "Omnivore"
                 dietInfoString = R.string.omnivore_info
             }
         }
@@ -127,14 +130,82 @@ class UserProfileFragment : Fragment() {
                 DialogInterface.OnClickListener { dialog, id ->
                     // User cancelled the dialog
                 })
-        // Create the AlertDialog object and return it
         builder.create().show()
     }
 
-    private fun updateProfile() {
-        Toast.makeText(context, "Your profile has been updated!", Toast.LENGTH_SHORT).show()
+    private fun mapDietToIndex(diet: String): Int {
+        var dietList = resources.getStringArray(R.array.diet_type)
+        for (i in dietList.indices) {
+            if (dietList[i] == diet) {
+                return i
+            }
+        }
+        return -1
     }
 
+    // Write to Firestore DB
+    private fun updateProfile() {
+        val db = FirebaseFirestore.getInstance()
+
+        // Collect the dietInfo to send
+        var dietInfo: HashMap<String, Any> = hashMapOf(
+            "dietType" to diet_type_spinner.selectedItem.toString()
+        )
+        addSelectedIntolerances(dietInfo)
+
+        // Update the Firestore DB with sent info
+        db.collection("UserData").document(MainActivity.userEmail).collection("UserDiet")
+            .document("UserDiet").set(dietInfo)
+            .addOnSuccessListener { _ ->
+                Log.d(MainActivity.userProfileFragTag, "Success adding diet info.")
+            }
+            .addOnFailureListener { e ->
+                Log.w(MainActivity.userProfileFragTag, "Error adding diet info", e)
+            }
+
+        Toast.makeText(context, "Your profile has been saved!", Toast.LENGTH_SHORT).show()
+    }
+
+    // Pull from Firestore DB
     private fun presentProfile() {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("UserData").document(MainActivity.userEmail).collection("UserDiet")
+            .document("UserDiet").get()
+            .addOnSuccessListener { result ->
+                if (!result.exists()) {
+                    // Handle situation where user is new and there is no data available
+                    return@addOnSuccessListener
+                }
+
+                Log.d(MainActivity.userProfileFragTag, "Success retrieving diet info.")
+
+                // Get diet type from Firebase DB, then have it occupy the spinner
+                var dbDietType = result.get("dietType").toString()
+                diet_type_spinner.setSelection(mapDietToIndex(dbDietType))
+
+                // Check off each intolerance that is found in the Firebase DB
+                var intolList = resources.getStringArray(R.array.intolerance_candidates)
+                for (i in intolList.indices) {
+                    var key = intolList[i] + " Intolerance"
+                    if (result.get(key) as Boolean) {
+                        intolerancesGrid.setItemChecked(i, true)
+                    }
+                    else {
+                        intolerancesGrid.setItemChecked(i, false)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w(MainActivity.userProfileFragTag, "Error retrieving diet info", e)
+            }
+    }
+
+    // Collect intolerances that are checked off on the screen and form a list of them
+    private fun addSelectedIntolerances(dietInfo: HashMap<String, Any>) {
+        for (i in 0 until intolerancesAdapter.count) {
+            var currIntolString = (intolerancesGrid.getItemAtPosition(i) as String) + " Intolerance"
+            dietInfo[currIntolString] = intolerancesGrid.isItemChecked(i)
+        }
     }
 }
