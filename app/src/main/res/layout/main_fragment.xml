@@ -22,15 +22,15 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/mealPlanBut"
+        app:layout_constraintBottom_toBottomOf="@+id/savedRecipeBut"
         app:layout_constraintRight_toRightOf="parent"
         android:text="Get Recipes"
         android:id="@+id/getRecipeBut"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Meal Plan"
-        android:id="@+id/mealPlanBut"
+        android:text="Saved Recipes"
+        android:id="@+id/savedRecipeBut"
         app:layout_constraintTop_toBottomOf="@+id/getRecipeBut"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -40,25 +40,17 @@
         android:layout_height="wrap_content"
         android:text="Profile"
         android:id="@+id/profileBut"
-        app:layout_constraintTop_toBottomOf="@+id/mealPlanBut"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/settingsBut"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        android:id="@+id/settingsBut"
-        app:layout_constraintTop_toBottomOf="@+id/profileBut"
+        app:layout_constraintTop_toBottomOf="@+id/savedRecipeBut"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/logoutBut"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Log Out"
         android:id="@+id/logoutBut"
-        app:layout_constraintTop_toBottomOf="@+id/settingsBut"
+        app:layout_constraintTop_toBottomOf="@+id/profileBut"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

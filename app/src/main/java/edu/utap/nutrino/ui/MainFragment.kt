@@ -13,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth
 import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
 import edu.utap.nutrino.api.SpoonApi
+import edu.utap.nutrino.ui.RecipeList.RecipeListFragment
+import kotlinx.android.synthetic.main.main_fragment.*
 
 class MainFragment : Fragment() {
 
@@ -53,11 +55,10 @@ class MainFragment : Fragment() {
         viewModel.initFireBaseRefs()
 
         var getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
-        var mealPlanBut = view.findViewById<Button>(R.id.mealPlanBut)
+        var mealPlanBut = view.findViewById<Button>(R.id.savedRecipeBut)
         var profileBut = view.findViewById<Button>(R.id.profileBut)
-        var settingsBut = view.findViewById<Button>(R.id.settingsBut)
         var logoutBut = view.findViewById<Button>(R.id.logoutBut)
-        initClickListeners(getRecipeBut, mealPlanBut, profileBut, settingsBut, logoutBut)
+        initClickListeners(getRecipeBut, mealPlanBut, profileBut, logoutBut)
 
     }
 
@@ -65,26 +66,25 @@ class MainFragment : Fragment() {
         getRecipeBut: Button,
         mealPlanBut: Button,
         profileBut: Button,
-        settingsBut: Button,
         logoutBut: Button
     ) {
         getRecipeBut.setOnClickListener{
             parentFragmentManager
                 .beginTransaction()
-                .replace(R.id.main_container, RecipeSearchFragment.newInstance())
-                .addToBackStack(MainActivity.recipeSearchFragTag)
+                .replace(R.id.main_container, RecipeSearchFragment.newInstance(), MainActivity.recipeSearchFragTag)
+                .addToBackStack(MainActivity.mainFragTag)
                 .commit()
         }
 
-        mealPlanBut.setOnClickListener{
-
+        savedRecipeBut.setOnClickListener{
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_container, RecipeListFragment.newInstance(), MainActivity.savedRecipeFragTag)
+                .addToBackStack(MainActivity.mainFragTag)
+                .commit()
         }
 
         profileBut.setOnClickListener{
-
-        }
-
-        settingsBut.setOnClickListener{
 
         }
 

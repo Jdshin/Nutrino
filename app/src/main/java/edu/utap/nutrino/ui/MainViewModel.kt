@@ -22,8 +22,10 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     private val spoonApi = SpoonApi.create()
     private val repository = SpoonRepository(spoonApi)
-    private var db : FirebaseFirestore = FirebaseFirestore.getInstance()
     private val recipeResults = MutableLiveData<List<Recipe>>()
+    private val savedRecipeResults = MutableLiveData<List<Recipe>>()
+    private val db : FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val savedRecipeList : MutableList<Recipe> = mutableListOf<Recipe>()
 
     private lateinit var userCreds : UserCreds
     private lateinit var userDocRef : DocumentReference
@@ -39,7 +41,7 @@ class MainViewModel : ViewModel() {
 
     fun netRecipes(apiKey : String, searchText: String) {
         viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "1", searchText))
+            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "6", searchText))
         }
     }
 
@@ -58,6 +60,9 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch (viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("FavoriteRecipes").document(recipe.key.toString()).set(recipe)
         }
+        // BELOW: debugging saved recipes to make sure tag switch works so RecipeList files can be recycled
+        savedRecipeList.add(recipe)
+        savedRecipeResults.postValue(savedRecipeList)
     }
 
     fun setOneRecipe(recipe : Recipe) {
@@ -70,5 +75,9 @@ class MainViewModel : ViewModel() {
 
     fun observeRecipes() : LiveData<List<Recipe>>{
         return recipeResults
+    }
+
+    fun observeSavedRecipes() : LiveData<List<Recipe>> {
+        return savedRecipeResults
     }
 }

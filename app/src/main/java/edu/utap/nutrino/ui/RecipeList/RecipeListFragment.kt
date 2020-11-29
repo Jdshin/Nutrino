@@ -8,9 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
+import android.util.Log
 import edu.utap.nutrino.ui.MainViewModel
-import kotlinx.android.synthetic.main.fragment_rv.*
+import kotlinx.android.synthetic.main.recipe_search_results_frag.*
 
 class RecipeListFragment : Fragment() {
 
@@ -27,13 +29,22 @@ class RecipeListFragment : Fragment() {
         adapter = RecipeListAdapter(viewModel)
         recipe_list_RV.adapter = adapter
         recipe_list_RV.layoutManager = LinearLayoutManager(view.context)
-        viewModel.observeRecipes().observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
-        })
+        if (this.tag == MainActivity.recipeResultsFragTag) {
+            viewModel.observeRecipes().observe(viewLifecycleOwner, Observer {
+                adapter.submitList(it)
+            })
+        }
+        else if (this.tag == MainActivity.savedRecipeFragTag) {
+            viewModel.observeSavedRecipes().observe(viewLifecycleOwner, Observer {
+                adapter.submitList(it)
+            })
+        }
+
+        Log.i("TAG USED: ", this.tag.toString())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_rv, container, false)
+        return inflater.inflate(R.layout.recipe_search_results_frag, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
