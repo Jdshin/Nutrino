@@ -22,11 +22,14 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     private val spoonApi = SpoonApi.create()
     private val repository = SpoonRepository(spoonApi)
-    private lateinit var userCreds : UserCreds
     private var db : FirebaseFirestore = FirebaseFirestore.getInstance()
-    private lateinit var userDocRef : DocumentReference
-
     private val recipeResults = MutableLiveData<List<Recipe>>()
+
+    private lateinit var userCreds : UserCreds
+    private lateinit var userDocRef : DocumentReference
+    private lateinit var oneRecipe : Recipe
+
+
 
     fun initFireBaseRefs() {
         viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
@@ -57,17 +60,12 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun doOneRecipe(context : Context, recipe: Recipe) {
-        val oneRecipeIntent = Intent(context, OneRecipeActivity::class.java)
-        val extras = Bundle()
-        extras.putString(RecipeListAdapter.recipeTitleKey, recipe.title)
-        extras.putString(RecipeListAdapter.recipeScoreKey, recipe.spoonacularScore.toString())
-        extras.putString(RecipeListAdapter.recipeReadyTimeKey, recipe.readyInMinutes.toString())
-        extras.putString(RecipeListAdapter.recipeSummaryKey, recipe.summary)
-        Log.i("Recipe Summary: ", recipe.summary)
-        extras.putString(RecipeListAdapter.recipeImageUrlKey, recipe.imageURL)
-        oneRecipeIntent.putExtras(extras)
-        ContextCompat.startActivity(context, oneRecipeIntent, extras)
+    fun setOneRecipe(recipe : Recipe) {
+        oneRecipe = recipe
+    }
+
+    fun getOneRecipe() : Recipe {
+        return oneRecipe
     }
 
     fun observeRecipes() : LiveData<List<Recipe>>{

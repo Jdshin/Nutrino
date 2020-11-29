@@ -12,8 +12,6 @@ data class Recipe (
     val imageType: String,
     @SerializedName("title")
     val title: String,
-    @SerializedName("summary")
-    val summary: String,
     @SerializedName("spoonacularScore")
     val spoonacularScore: Int,
     @SerializedName("pricePerServing")
@@ -21,7 +19,9 @@ data class Recipe (
     @SerializedName("readyInMinutes")
     val readyInMinutes: Int,
     @SerializedName("nutrition")
-    val nutrients: NutritionInfo
+    val nutrition: NutritionInfo,
+    @SerializedName("analyzedInstructions")
+    val analyzedInstructions : List<AnalyzedInstructions>
 )
 
 data class NutritionInfo (
@@ -49,5 +49,17 @@ data class Nutrient (
         val amount : Double,
         @SerializedName("unit")
         val unit : String
+)
+
+data class AnalyzedInstructions (
+        @SerializedName("steps")
+        val recipeSteps: List<RecipeInstruction>
+)
+
+data class RecipeInstruction (
+        @SerializedName("number")
+        val stepNumber : Int,
+        @SerializedName("step")
+        val instructionString : String
 )
 
