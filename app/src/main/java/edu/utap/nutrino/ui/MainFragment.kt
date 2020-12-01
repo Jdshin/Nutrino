@@ -80,6 +80,7 @@ class MainFragment : Fragment() {
         }
 
         savedRecipeBut.setOnClickListener{
+            viewModel.getFavRecipes()
             parentFragmentManager
                 .beginTransaction()
                 .replace(R.id.main_container, RecipeListFragment.newInstance(), MainActivity.savedRecipeFragTag)

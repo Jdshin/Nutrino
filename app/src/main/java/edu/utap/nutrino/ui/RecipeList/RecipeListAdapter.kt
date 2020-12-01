@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
 import edu.utap.nutrino.api.Recipe
 import edu.utap.nutrino.glide.Glide
@@ -57,8 +58,8 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
             viewModel.setOneRecipe(getItem(position))
             activity.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.main_container, OneRecipeFragment.newInstance())
-                    .addToBackStack("hello")
+                    .replace(R.id.main_container, OneRecipeFragment.newInstance(), MainActivity.oneRecipeFragTag)
+                    .addToBackStack(null)
                     .commit()
         }
     }

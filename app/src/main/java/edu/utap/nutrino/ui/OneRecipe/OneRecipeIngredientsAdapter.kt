@@ -22,7 +22,7 @@ class OneRecipeIngredientsAdapter(private val viewModel: MainViewModel)
         private val ingredientTV = recipeView.findViewById<TextView>(R.id.one_recipe_step_TV)
 
         fun bind (recipeIngredient: RecipeIngredient) {
-            var ingredientName = recipeIngredient.name.substring(0,1).toUpperCase() + recipeIngredient.name.substring(1)
+            var ingredientName = recipeIngredient.name!!.substring(0,1).toUpperCase() + recipeIngredient.name.substring(1)
             ingredientTV.text = ingredientName
         }
     }

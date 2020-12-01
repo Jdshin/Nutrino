@@ -52,8 +52,8 @@ class OneRecipeFragment : Fragment() {
         one_recipe_score_TV.text = oneRecipe.spoonacularScore.toString()
         one_recipe_ready_time_TV.text = "Cook Time: ${oneRecipe.readyInMinutes.toString()} minutes"
 
-        adapterIngredientsAdapter.submitList(oneRecipe.nutrition.ingredients)
-        adapterInstructionsAdapter.submitList(oneRecipe.analyzedInstructions[0].recipeSteps)
+        adapterIngredientsAdapter.submitList(oneRecipe.nutrition!!.ingredients)
+        adapterInstructionsAdapter.submitList(oneRecipe.analyzedInstructions?.get(0)?.recipeSteps)
 
     }
 
