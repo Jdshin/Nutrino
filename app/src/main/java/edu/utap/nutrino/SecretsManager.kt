@@ -28,7 +28,13 @@ class SecretsManager {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
         }
-        return sharedPrefs!!.getString(theKey, "")!!
+
+        if (sharedPrefs!!.contains(theKey)) {
+            return sharedPrefs!!.getString(theKey, "")!!
+        }
+        else {
+            return ""
+        }
     }
 
     // Starter code from here:  https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences

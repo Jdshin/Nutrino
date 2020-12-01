@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Property
 import androidx.fragment.app.FragmentTransaction
+import com.google.firebase.firestore.FirebaseFirestore
 import edu.utap.nutrino.ui.MainFragment
 import java.util.*
 import edu.utap.nutrino.SecretsManager.Companion.spoonacular_api_key
@@ -19,10 +20,11 @@ class MainActivity : AppCompatActivity() {
         const val userProfileFragTag = "userProfileFragTag"
         const val userAuthRequestCode = 10
         var userEmail = ""
-        var spoonApiKey = ""
+        var spoonApiKey: String = ""
     }
 
     private lateinit var mainFragment: MainFragment
+    private lateinit var sm: SecretsManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +39,15 @@ class MainActivity : AppCompatActivity() {
             userAuthRequestCode -> {
                 if (resultCode == RESULT_OK) {
                     Log.i("User Email: ", userEmail)
-                    spoonApiKey = SecretsManager().getValueFromKey(spoonacular_api_key, applicationContext)
-                    mainFragment = MainFragment.newInstance()
-                    initMainFragment()
+                    sm = SecretsManager()
+                    spoonApiKey = sm.getValueFromKey(spoonacular_api_key, applicationContext)
+                    if (spoonApiKey != "") {
+                        mainFragment = MainFragment.newInstance()
+                        initMainFragment()
+                    }
+                    else {
+                        fetchKeyFromDb(spoonacular_api_key)
+                    }
                 } else {
                     Log.d(javaClass.simpleName, "The sign-in stage failed.")
                 }
@@ -58,5 +66,21 @@ class MainActivity : AppCompatActivity() {
     private fun doSignIn() {
         val userAuthIntent = Intent(this, UserAuthActivity::class.java)
         startActivityForResult(userAuthIntent, userAuthRequestCode)
+    }
+
+    private fun fetchKeyFromDb(key: String) {
+        var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        db.collection("Keys").document("ApiKeys").get()
+            .addOnSuccessListener { result ->
+                Log.d("MainActivity", "Fetching key from DB succeeded.")
+                spoonApiKey = result.getString(spoonacular_api_key).toString()
+                // Update EncryptedSharedPreferences
+                sm.setKvPair(key, spoonApiKey, this)
+                mainFragment = MainFragment.newInstance()
+                initMainFragment()
+            }
+            .addOnFailureListener {
+                Log.d("MainActivity", "Fetching key from DB failed ", it)
+            }
     }
 }
