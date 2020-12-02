@@ -39,22 +39,47 @@ class OneRecipeFragment : Fragment() {
         val one_recipe_title_TV = view.findViewById<TextView>(R.id.one_recipe_title_TV)
         val one_recipe_score_TV = view.findViewById<TextView>(R.id.one_recipe_score_TV)
         val one_recipe_ready_time_TV = view.findViewById<TextView>(R.id.one_recipe_ready_time_TV)
+        val oneRecipeFavIV = view.findViewById<ImageView>(R.id.one_recipe_fav_IV)
+        val oneRecipeCartIV = view.findViewById<ImageView>(R.id.one_recipe_cart_but)
 
         val oneRecipe = viewModel.getOneRecipe()
-
+        val savedRecipes = viewModel.observeSavedRecipes().value
+        val shoppingCartMap = viewModel.observeShoppingCartListMap()
         initAdapters(view)
 
+        one_recipe_title_TV.text = oneRecipe.title
+        one_recipe_score_TV.text = "Rating${"\n"}${oneRecipe.spoonacularScore.toString()}"
+        one_recipe_ready_time_TV.text = "Cook Time${"\n"}${oneRecipe.readyInMinutes.toString()} minutes"
         if (oneRecipe.imageURL != null) {
             Glide.glideFetch(oneRecipe.imageURL, one_recipe_IV)
         }
 
-        one_recipe_title_TV.text = oneRecipe.title
-        one_recipe_score_TV.text = oneRecipe.spoonacularScore.toString()
-        one_recipe_ready_time_TV.text = "Cook Time: ${oneRecipe.readyInMinutes.toString()} minutes"
+        oneRecipeFavIV.setOnClickListener{
+            if (savedRecipes != null && !savedRecipes.contains(oneRecipe)) {
+                viewModel.addFavRecipe(oneRecipe)
+                oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+            }
+            else {
+                viewModel.removeFavRecipe(oneRecipe)
+                oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+            }
+            viewModel.getFavRecipes()
+        }
+
+        oneRecipeCartIV.setOnClickListener{
+            if (shoppingCartMap.keys.contains(oneRecipe.key)) {
+                viewModel.removeFromShoppingCart(oneRecipe)
+                oneRecipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
+            }
+            else {
+                viewModel.addToShoppingCart(oneRecipe)
+                oneRecipeCartIV.setImageResource(R.drawable.ic_check_mark)
+            }
+            viewModel.updateShoppingCart()
+        }
 
         adapterIngredientsAdapter.submitList(oneRecipe.nutrition!!.ingredients)
         adapterInstructionsAdapter.submitList(oneRecipe.analyzedInstructions?.get(0)?.recipeSteps)
-
     }
 
     private fun initAdapters(view: View) {

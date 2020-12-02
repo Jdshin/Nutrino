@@ -3,14 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_constraintTop_toTopOf="parent"
-    android:id="@+id/one_recipe_title_TV"
-    android:textSize="14dp"
-    android:ellipsize="end"
-    app:layout_constraintBottom_toTopOf="@+id/one_recipe_IV_container"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/one_recipe_title_TV"
+        android:textSize="20dp"
+        android:layout_margin="10dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/one_recipe_IV_container"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -30,41 +33,91 @@
         android:id="@+id/recipe_info_container"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/one_recipe_IV_container"
-        app:layout_constraintBottom_toTopOf="@id/one_recipe_ingredientRV_container">
+        app:layout_constraintBottom_toTopOf="@id/ingredients_title_TV">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/one_recipe_score_TV"
+            android:gravity="center"
+            android:layout_margin="10dp"
+            android:textStyle="bold"
+            android:textSize="14dp"
             android:layout_weight="1"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/one_recipe_ready_time_TV"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:layout_margin="10dp"
             android:layout_weight="1"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/one_recipe_fav_IV"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:layout_marginHorizontal="15dp"
+            android:src="@drawable/ic_favorite_border_black_24dp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/one_recipe_cart_but"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:layout_marginHorizontal="15dp"
+            android:src="@drawable/ic_shopping_cart_icon"/>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ingredients_title_TV"
+        android:text="@string/ingredientsTVString"
+        android:layout_margin="10dp"
+        android:paddingLeft="10dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/recipe_info_container"
+        app:layout_constraintBottom_toTopOf="@+id/one_recipe_ingredientRV_container"/>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/one_recipe_ingredientRV_container"
-        app:layout_constraintBottom_toTopOf="@id/one_recipe_instructionsRV_container"
-        app:layout_constraintTop_toBottomOf="@+id/recipe_info_container">
+        app:layout_constraintTop_toBottomOf="@+id/ingredients_title_TV"
+        app:layout_constraintBottom_toTopOf="@id/instructions_title_TV">
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/one_recipe_ingredients_RV"/>
+            android:id="@+id/one_recipe_ingredients_RV"
+            android:scrollbars="vertical"/>
     </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/instructions_title_TV"
+        android:text="@string/instructionTVString"
+        android:layout_margin="10dp"
+        android:paddingLeft="10dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/one_recipe_ingredientRV_container"
+        app:layout_constraintBottom_toTopOf="@id/one_recipe_instructionsRV_container"/>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/one_recipe_instructionsRV_container"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/one_recipe_ingredientRV_container">
+        app:layout_constraintTop_toBottomOf="@+id/instructions_title_TV"
+        app:layout_constraintBottom_toBottomOf="parent">
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/one_recipe_instructions_RV"/>
+            android:id="@+id/one_recipe_instructions_RV"
+            android:scrollbars="vertical"/>
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

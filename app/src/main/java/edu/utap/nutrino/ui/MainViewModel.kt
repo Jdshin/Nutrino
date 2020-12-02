@@ -10,9 +10,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.utap.nutrino.MainActivity
+import edu.utap.nutrino.R
 import edu.utap.nutrino.api.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 class MainViewModel : ViewModel() {
     private val spoonApi = SpoonApi.create()
@@ -21,11 +23,12 @@ class MainViewModel : ViewModel() {
 
     private val recipeResults = MutableLiveData<List<Recipe>>()
     private val savedRecipeResults = MutableLiveData<List<Recipe>>()
-    private val savedRecipeList = mutableListOf<Recipe>()
 
     private val shoppingCart = MutableLiveData<List<String>>()
     private val shoppingCartList = mutableListOf<String>()
     private val shoppingCartListMap = mutableMapOf<String, List<RecipeIngredient>>()
+
+    private var userProfile : UserProfile? = UserProfile()
 
     private lateinit var userCreds : UserCreds
     private lateinit var userDocRef : DocumentReference
@@ -39,11 +42,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun netRecipes(apiKey : String, searchText: String) {
-        viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "6", searchText))
-        }
-    }
 
     fun connectUser(body : SpoonApi.UserPostData, apiKey: String) {
         viewModelScope.launch(context = viewModelScope.coroutineContext + Dispatchers.IO) {
@@ -56,11 +54,22 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun netRecipes(apiKey : String, searchText: String) {
+        viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
+            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "1", searchText))
+        }
+    }
+
     fun addFavRecipe(recipe : Recipe) {
         viewModelScope.launch (viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("FavoriteRecipes").document(recipe.key.toString()).set(recipe)
         }
-        // BELOW: debugging saved recipes to make sure tag switch works so RecipeList files can be recycled
+    }
+
+    fun removeFavRecipe(recipe: Recipe) {
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            userDocRef.collection("FavoriteRecipes").document(recipe.key.toString()).delete()
+        }
     }
 
     fun getFavRecipes() {
@@ -86,16 +95,15 @@ class MainViewModel : ViewModel() {
     }
 
     fun addToShoppingCart(recipe: Recipe) {
-        if (recipe != null) {
-            shoppingCartListMap[recipe.key.toString()] = recipe.nutrition!!.ingredients!!
-        }
+        shoppingCartListMap[recipe.key.toString()] = recipe.nutrition!!.ingredients!!
     }
 
-    fun observeShoppingCart() : LiveData<List<String>> {
-        return shoppingCart
+    fun removeFromShoppingCart(recipe: Recipe) {
+        shoppingCartListMap.remove(recipe.key.toString())
     }
 
     fun updateShoppingCart() {
+        shoppingCartList.clear()
         shoppingCartListMap.values.forEach { list ->
             list.map { ingredient ->
                 if (!shoppingCartList.contains(ingredient.name)) {
@@ -104,14 +112,31 @@ class MainViewModel : ViewModel() {
                 }
             }
         }
+        db.collection("UserData")
+                .document(MainActivity.userEmail)
+                .collection("ShoppingCart")
+                .document()
+                .set(shoppingCartListMap)
     }
 
-    fun observeRecipes() : LiveData<List<Recipe>>{
-        return recipeResults
+    fun clearShoppingCart() {
+        shoppingCartListMap.clear()
+        shoppingCartList.clear()
+        shoppingCart.postValue(shoppingCartList)
     }
 
-    fun observeSavedRecipes() : LiveData<List<Recipe>> {
-        return savedRecipeResults
+    fun netUserProfile() {
+        viewModelScope.launch (viewModelScope.coroutineContext + Dispatchers.IO) {
+            val query = db.collection("UserData")
+                    .document(MainActivity.userEmail)
+                    .collection("UserDiet")
+                    .document("UserDiet")
+                    .get()
+            query.addOnSuccessListener {
+                userProfile = it.toObject(UserProfile::class.java)
+                Log.i("User Diet Retrieved", " Success")
+            }
+        }
     }
 
     fun setOneRecipe(recipe : Recipe) {
@@ -120,5 +145,21 @@ class MainViewModel : ViewModel() {
 
     fun getOneRecipe() : Recipe {
         return oneRecipe
+    }
+
+    fun observeShoppingCart() : LiveData<List<String>> {
+        return shoppingCart
+    }
+
+    fun observeShoppingCartListMap() : Map<String, List<RecipeIngredient>>{
+        return shoppingCartListMap
+    }
+
+    fun observeSavedRecipes() : LiveData<List<Recipe>> {
+        return savedRecipeResults
+    }
+
+    fun observeRecipes() : LiveData<List<Recipe>>{
+        return recipeResults
     }
 }
