@@ -60,4 +60,10 @@ data class RecipeInstruction (
         val instructionString : String? = null
 )
 
+data class UserProfile (
+        @SerializedName ("intolerances")
+        val intolList : List<String> = listOf(),
+        @SerializedName ("dietType")
+        val dietType : String? = ""
+)
 

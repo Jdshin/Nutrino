@@ -1,7 +1,6 @@
 package edu.utap.nutrino.ui
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,11 +9,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.utap.nutrino.MainActivity
-import edu.utap.nutrino.R
 import edu.utap.nutrino.api.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 
 class MainViewModel : ViewModel() {
     private val spoonApi = SpoonApi.create()
@@ -28,7 +25,8 @@ class MainViewModel : ViewModel() {
     private val shoppingCartList = mutableListOf<String>()
     private val shoppingCartListMap = mutableMapOf<String, List<RecipeIngredient>>()
 
-    private var userProfile : UserProfile? = UserProfile()
+    private var userProfileIntolList = mutableListOf<String>()
+    private var userDietType : String? = null
 
     private lateinit var userCreds : UserCreds
     private lateinit var userDocRef : DocumentReference
@@ -56,7 +54,9 @@ class MainViewModel : ViewModel() {
 
     fun netRecipes(apiKey : String, searchText: String) {
         viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "1", searchText))
+            var userIntoleranceStr = userProfileIntolList.joinToString(",")
+            Log.i("Net Recipes: ", userIntoleranceStr)
+            recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "5", searchText, userDietType, userIntoleranceStr))
         }
     }
 
@@ -119,6 +119,7 @@ class MainViewModel : ViewModel() {
                 .set(shoppingCartListMap)
     }
 
+    //TODO implement button in shopping cart fragment to clear all items in cart
     fun clearShoppingCart() {
         shoppingCartListMap.clear()
         shoppingCartList.clear()
@@ -133,8 +134,15 @@ class MainViewModel : ViewModel() {
                     .document("UserDiet")
                     .get()
             query.addOnSuccessListener {
-                userProfile = it.toObject(UserProfile::class.java)
-                Log.i("User Diet Retrieved", " Success")
+                var userProfile = it.data!!
+                userDietType = userProfile["dietType"] as String
+                userProfile.remove("dietType")
+
+                for (key in userProfile.keys) {
+                    if (userProfile[key] as Boolean) {
+                        userProfileIntolList.add(key)
+                    }
+                }
             }
         }
     }
