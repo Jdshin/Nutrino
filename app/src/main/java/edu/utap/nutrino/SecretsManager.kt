@@ -16,6 +16,7 @@ class SecretsManager {
     private var sharedPrefs: SharedPreferences? = null
 
     // Starter code from here:  https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
+    // Return "" to signal that the key is either nonexistent or stale and will need to fetch from the DB
     fun getValueFromKey(theKey: String, context: Context): String {
         if (masterKeyAlias == null) {
             masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -30,6 +31,13 @@ class SecretsManager {
         }
 
         if (sharedPrefs!!.contains(theKey)) {
+
+
+
+            // Test the validity of the key (it may be stale) to determine whether or not to re-fetch from DB
+
+
+            // Key is fresh so we're good to go!
             return sharedPrefs!!.getString(theKey, "")!!
         }
         else {

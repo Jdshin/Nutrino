@@ -187,7 +187,7 @@ class UserProfileFragment : Fragment() {
                 // Check off each intolerance that is found in the Firebase DB
                 var intolList = resources.getStringArray(R.array.intolerance_candidates)
                 for (i in intolList.indices) {
-                    var key = intolList[i] + " Intolerance"
+                    var key = convertIntol(intolList[i])
                     if (result.get(key) as Boolean) {
                         intolerancesGrid.setItemChecked(i, true)
                     }
@@ -204,8 +204,13 @@ class UserProfileFragment : Fragment() {
     // Collect intolerances that are checked off on the screen and form a list of them
     private fun addSelectedIntolerances(dietInfo: HashMap<String, Any>) {
         for (i in 0 until intolerancesAdapter.count) {
-            var currIntolString = (intolerancesGrid.getItemAtPosition(i) as String) + " Intolerance"
+            var currIntolString = convertIntol(intolerancesGrid.getItemAtPosition(i) as String)
             dietInfo[currIntolString] = intolerancesGrid.isItemChecked(i)
         }
+    }
+
+    private fun convertIntol(original: String): String {
+        var modified = original.toLowerCase()
+        return modified
     }
 }
