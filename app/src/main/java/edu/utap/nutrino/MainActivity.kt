@@ -13,11 +13,12 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "Nutrino"
-        const val recipeListFragTag = "recipeListTag"
+        const val mainFragTag = "mainFragTag"
+        const val recipeResultsFragTag = "recipeListTag"
         const val recipeSearchFragTag = "recipeSearchFragTag"
+        const val savedRecipeFragTag = "savedRecipeFragTag"
+        const val oneRecipeFragTag = "oneRecipeFragTag"
         const val userAuthRequestCode = 10
-        var recipeSearchFragTag = "recipeSearchTag"
-        var recipeListFragTag = "recipeListTag"
         var userEmail = ""
     }
 

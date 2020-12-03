@@ -9,12 +9,9 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import edu.utap.nutrino.BuildConfig
 import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
-import kotlinx.android.synthetic.main.fragment_rv.*
-import java.util.*
+import edu.utap.nutrino.ui.RecipeList.RecipeListFragment
 
 class RecipeSearchFragment : Fragment() {
     private val viewModel : MainViewModel by activityViewModels()
@@ -45,8 +42,8 @@ class RecipeSearchFragment : Fragment() {
             viewModel.netRecipes(getString(R.string.Spoonacular_API_KEY), editText.text.toString())
             parentFragmentManager
                     .beginTransaction()
-                    .replace(R.id.main_container, RecipeListFragment.newInstance())
-                    .addToBackStack(MainActivity.recipeListFragTag)
+                    .replace(R.id.main_container, RecipeListFragment.newInstance(), MainActivity.recipeResultsFragTag)
+                    .addToBackStack(MainActivity.recipeSearchFragTag)
                     .commit()
         }
     }
