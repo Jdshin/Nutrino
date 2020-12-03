@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -15,6 +16,7 @@ import edu.utap.nutrino.api.Recipe
 import edu.utap.nutrino.glide.Glide
 import edu.utap.nutrino.ui.MainViewModel
 import edu.utap.nutrino.ui.OneRecipe.OneRecipeFragment
+import kotlinx.coroutines.withContext
 
 
 class RecipeListAdapter(private val viewModel: MainViewModel)
@@ -53,10 +55,12 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
                 if (savedRecipes != null && !savedRecipes.contains(recipe)) {
                     viewModel.addFavRecipe(recipe)
                     recipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+                    Toast.makeText(recipeFavIV.context, "Recipe saved", Toast.LENGTH_LONG).show()
                 }
                 else {
                     viewModel.removeFavRecipe(recipe)
                     recipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                    Toast.makeText(recipeFavIV.context, "Recipe unsaved", Toast.LENGTH_LONG).show()
                 }
                 viewModel.getFavRecipes()
             }
@@ -65,12 +69,13 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
                 if (shoppingCartMap.keys.contains(recipe.key.toString())) {
                     viewModel.removeFromShoppingCart(recipe)
                     recipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
+                    Toast.makeText(recipeCartIV.context, "Recipe removed from shopping cart", Toast.LENGTH_LONG).show()
                 }
                 else {
                     viewModel.addToShoppingCart(recipe)
                     recipeCartIV.setImageResource(R.drawable.ic_check_mark)
+                    Toast.makeText(recipeCartIV.context, "Recipe added to shopping cart", Toast.LENGTH_LONG).show()
                 }
-                viewModel.updateShoppingCart()
             }
         }
     }
