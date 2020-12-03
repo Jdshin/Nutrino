@@ -73,24 +73,26 @@ class MainViewModel : ViewModel() {
     }
 
     fun getFavRecipes() {
-        if (FirebaseAuth.getInstance().currentUser == null) {
-            savedRecipeResults.value = listOf()
-        }
-        else {
-            db.collection("UserData")
-                    .document(MainActivity.userEmail)
-                    .collection("FavoriteRecipes")
-                    .limit(50)
-                    .addSnapshotListener{ querySnapshot, ex ->
-                        if (ex != null) {
-                            return@addSnapshotListener
-                        }
-                        else {
-                            savedRecipeResults.value = querySnapshot!!.documents.mapNotNull {
-                                it.toObject(Recipe::class.java)
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            if (FirebaseAuth.getInstance().currentUser == null) {
+                savedRecipeResults.value = listOf()
+            }
+            else {
+                db.collection("UserData")
+                        .document(MainActivity.userEmail)
+                        .collection("FavoriteRecipes")
+                        .limit(50)
+                        .addSnapshotListener{ querySnapshot, ex ->
+                            if (ex != null) {
+                                return@addSnapshotListener
+                            }
+                            else {
+                                savedRecipeResults.value = querySnapshot!!.documents.mapNotNull {
+                                    it.toObject(Recipe::class.java)
+                                }
                             }
                         }
-                    }
+            }
         }
     }
 
