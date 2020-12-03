@@ -48,9 +48,9 @@ class MainFragment : Fragment() {
             welcomeTV.text = welcomeString
         }
       
-        if (MainActivity.userEmail.isNotEmpty()){
-            val userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
-            viewModel.connectUser(userPostData, getString(R.string.Spoonacular_API_KEY))
+        if (MainActivity.userEmail.isNotEmpty()) {
+            var userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
+            viewModel.connectUser(userPostData, MainActivity.spoonApiKey)
         }
 
         viewModel.initFireBaseRefs()
@@ -90,7 +90,11 @@ class MainFragment : Fragment() {
         }
 
         profileBut.setOnClickListener{
-
+            parentFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.main_container, UserProfileFragment.newInstance())
+                    .addToBackStack(MainActivity.userProfileFragTag)
+                    .commit()
         }
 
         shoppingCartBut.setOnClickListener{

@@ -39,7 +39,7 @@ class RecipeSearchFragment : Fragment() {
     private fun setRecipeSearchBut(editText: EditText, button: Button) {
         button.setOnClickListener{
             Log.i("Search Text: ", editText.text.toString())
-            viewModel.netRecipes(getString(R.string.Spoonacular_API_KEY), editText.text.toString())
+            viewModel.netRecipes(MainActivity.spoonApiKey, editText.text.toString())
             parentFragmentManager
                     .beginTransaction()
                     .replace(R.id.main_container, RecipeListFragment.newInstance(), MainActivity.recipeResultsFragTag)
