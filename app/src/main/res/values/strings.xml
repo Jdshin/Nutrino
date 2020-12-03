@@ -1,5 +1,4 @@
 <resources>
-    <string name="Spoonacular_API_KEY"></string>
     <string name="app_name">Nutrino</string>
     <string name="intoleranceString">dairy,egg,gluten,grain,peanut,seafood,sesame,shellfish,soy,sulfite,tree nut,wheat</string>
     <string name="ingredientsTVString">Ingredients</string>
