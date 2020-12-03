@@ -1,65 +1,69 @@
 package edu.utap.nutrino.api
 
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
 data class Recipe (
     @SerializedName("id")
-    val key: Int,
+    val key: Int? = null,
     @SerializedName("image")
-    val imageURL: String,
+    val imageURL: String? = null,
     @SerializedName("imageType")
-    val imageType: String,
+    val imageType: String? = null,
     @SerializedName("title")
-    val title: String,
+    val title: String? = null,
     @SerializedName("spoonacularScore")
-    val spoonacularScore: Int,
+    val spoonacularScore: Int? = null,
     @SerializedName("pricePerServing")
-    val pricePerServing: Double,
+    val pricePerServing: Double? = null,
     @SerializedName("readyInMinutes")
-    val readyInMinutes: Int,
+    val readyInMinutes: Int? = null,
     @SerializedName("nutrition")
-    val nutrition: NutritionInfo,
+    val nutrition: NutritionInfo? = null,
     @SerializedName("analyzedInstructions")
-    val analyzedInstructions : List<AnalyzedInstructions>
+    val analyzedInstructions : List<AnalyzedInstructions>? = listOf<AnalyzedInstructions>()
 )
 
 data class NutritionInfo (
         @SerializedName("nutrients")
-        val nutrients : List<Nutrient>,
+        val nutrients : List<Nutrient>? = null,
         @SerializedName("ingredients")
-        val ingredients : List<RecipeIngredients>
+        val ingredients : List<RecipeIngredient>? = null
 )
 
-data class RecipeIngredients (
+data class RecipeIngredient (
         @SerializedName("name")
-        val name : String,
+        val name : String? = null,
         @SerializedName("amount")
-        val amount : Double,
+        val amount : Double? = null,
         @SerializedName("unit")
-        val unit : String,
-        @SerializedName("nutrients")
-        val nutrients : List<Nutrient>
+        val unit : String? = null
 )
 
 data class Nutrient (
         @SerializedName("title")
-        val title : String,
+        val title : String? = null,
         @SerializedName("amount")
-        val amount : Double,
+        val amount : Double? = null,
         @SerializedName("unit")
-        val unit : String
+        val unit : String? = null
 )
 
 data class AnalyzedInstructions (
         @SerializedName("steps")
-        val recipeSteps: List<RecipeInstruction>
+        val recipeSteps: List<RecipeInstruction>? = null
 )
 
 data class RecipeInstruction (
         @SerializedName("number")
-        val stepNumber : Int,
+        val stepNumber : Int? = null,
         @SerializedName("step")
-        val instructionString : String
+        val instructionString : String? = null
+)
+
+data class UserProfile (
+        @SerializedName ("intolerances")
+        val intolList : List<String> = listOf(),
+        @SerializedName ("dietType")
+        val dietType : String? = ""
 )
 

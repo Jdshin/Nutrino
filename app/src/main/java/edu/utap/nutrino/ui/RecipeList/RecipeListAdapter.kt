@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
 import edu.utap.nutrino.api.Recipe
 import edu.utap.nutrino.glide.Glide
@@ -23,15 +24,53 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
         private var recipeTitleTV = recipeView.findViewById<TextView>(R.id.recipe_title_TV)
         private var recipeIV = recipeView.findViewById<ImageView>(R.id.recipe_pic_IV)
         private var recipeFavIV = recipeView.findViewById<ImageView>(R.id.recipe_fav_but)
+        private var recipeCartIV = recipeView.findViewById<ImageView>(R.id.add_to_cart_but)
 
         fun bind (recipe : Recipe) {
+
+            val savedRecipes = viewModel.observeSavedRecipes().value
+            val shoppingCartMap = viewModel.observeShoppingCartListMap()
+
             recipeTitleTV.text = recipe.title
+
+            if (savedRecipes != null && savedRecipes.contains(recipe)) {
+                recipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+            } else {
+                recipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+            }
+
+            if (shoppingCartMap.keys.contains(recipe.key.toString())) {
+                recipeCartIV.setImageResource(R.drawable.ic_check_mark)
+            } else {
+                recipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
+            }
+
             if (recipe.imageURL != null) {
                 Glide.glideFetch(recipe.imageURL, recipeIV)
             }
+
             recipeFavIV.setOnClickListener{
-                viewModel.addFavRecipe(recipe)
-                recipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+                if (savedRecipes != null && !savedRecipes.contains(recipe)) {
+                    viewModel.addFavRecipe(recipe)
+                    recipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+                }
+                else {
+                    viewModel.removeFavRecipe(recipe)
+                    recipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                }
+                viewModel.getFavRecipes()
+            }
+
+            recipeCartIV.setOnClickListener{
+                if (shoppingCartMap.keys.contains(recipe.key.toString())) {
+                    viewModel.removeFromShoppingCart(recipe)
+                    recipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
+                }
+                else {
+                    viewModel.addToShoppingCart(recipe)
+                    recipeCartIV.setImageResource(R.drawable.ic_check_mark)
+                }
+                viewModel.updateShoppingCart()
             }
         }
     }
@@ -51,8 +90,8 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
             viewModel.setOneRecipe(getItem(position))
             activity.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.main_container, OneRecipeFragment.newInstance())
-                    .addToBackStack("hello")
+                    .replace(R.id.main_container, OneRecipeFragment.newInstance(), getItem(position).key.toString())
+                    .addToBackStack(null)
                     .commit()
         }
     }

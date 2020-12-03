@@ -6,15 +6,15 @@ class SpoonRepository(private val spoonApi : SpoonApi) {
 
     //TODO Update arguments for getRecipes
     //TODO prevent crash with no API key
-    suspend fun getRecipeEndpoint (apiKey : String, number : String, searchText : String) : List<Recipe>? {
+    suspend fun getRecipeEndpoint (apiKey: String, number: String, searchText: String, dietType: String?, intolStr: String?) : List<Recipe>? {
         return spoonApi.getRecipeEndpoint(
             apiKey,
             number,
             searchText,
             null,
             null,
-            null,
-            null,
+            dietType,
+            intolStr,
             addRecipeInformation = true,
             addRecipeNutrition = true,
             null,

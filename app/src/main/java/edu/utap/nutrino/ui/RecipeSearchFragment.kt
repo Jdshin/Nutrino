@@ -42,8 +42,8 @@ class RecipeSearchFragment : Fragment() {
             viewModel.netRecipes(MainActivity.spoonApiKey, editText.text.toString())
             parentFragmentManager
                     .beginTransaction()
-                    .replace(R.id.main_container, RecipeListFragment.newInstance())
-                    .addToBackStack(MainActivity.recipeListFragTag)
+                    .replace(R.id.main_container, RecipeListFragment.newInstance(), MainActivity.recipeResultsFragTag)
+                    .addToBackStack(MainActivity.recipeSearchFragTag)
                     .commit()
         }
     }

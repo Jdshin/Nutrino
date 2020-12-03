@@ -13,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth
 import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
 import edu.utap.nutrino.api.SpoonApi
+import edu.utap.nutrino.ui.RecipeList.RecipeListFragment
+import edu.utap.nutrino.ui.ShoppingCart.ShoppingCartFragment
 
 class MainFragment : Fragment() {
 
@@ -35,49 +37,56 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var welcomeTV = view.findViewById<TextView>(R.id.welcomeTV)
-        var displayName = FirebaseAuth.getInstance().currentUser!!.displayName
+        val welcomeTV = view.findViewById<TextView>(R.id.welcomeTV)
+        val displayName = FirebaseAuth.getInstance().currentUser!!.displayName
         MainActivity.userEmail = FirebaseAuth.getInstance().currentUser!!.email.toString()
         if (displayName.isNullOrBlank()) {
             welcomeTV.text = "Hello!"
         }
         else {
-            welcomeTV.text = "Hello, " + displayName + "!"
+            val welcomeString = "Hello, ${displayName}!"
+            welcomeTV.text = welcomeString
         }
       
-        if (MainActivity.userEmail.isNotEmpty()){
+        if (MainActivity.userEmail.isNotEmpty()) {
             var userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
             viewModel.connectUser(userPostData, MainActivity.spoonApiKey)
         }
 
         viewModel.initFireBaseRefs()
+        viewModel.netUserProfile()
 
-        var getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
-        var mealPlanBut = view.findViewById<Button>(R.id.mealPlanBut)
-        var profileBut = view.findViewById<Button>(R.id.profileBut)
-        var settingsBut = view.findViewById<Button>(R.id.settingsBut)
-        var logoutBut = view.findViewById<Button>(R.id.logoutBut)
-        initClickListeners(getRecipeBut, mealPlanBut, profileBut, settingsBut, logoutBut)
+        val getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
+        val savedRecipeBut = view.findViewById<Button>(R.id.savedRecipeBut)
+        val profileBut = view.findViewById<Button>(R.id.profileBut)
+        val shoppingCartBut = view.findViewById<Button>(R.id.shoppingCartBut)
+        val logoutBut = view.findViewById<Button>(R.id.logoutBut)
+        initClickListeners(getRecipeBut, savedRecipeBut, profileBut, shoppingCartBut, logoutBut)
 
     }
 
     private fun initClickListeners(
         getRecipeBut: Button,
-        mealPlanBut: Button,
+        savedRecipeBut: Button,
         profileBut: Button,
-        settingsBut: Button,
+        shoppingCartBut: Button,
         logoutBut: Button
     ) {
         getRecipeBut.setOnClickListener{
             parentFragmentManager
                 .beginTransaction()
-                .replace(R.id.main_container, RecipeSearchFragment.newInstance())
-                .addToBackStack(MainActivity.recipeSearchFragTag)
+                .replace(R.id.main_container, RecipeSearchFragment.newInstance(), MainActivity.recipeSearchFragTag)
+                .addToBackStack(MainActivity.mainFragTag)
                 .commit()
         }
 
-        mealPlanBut.setOnClickListener{
-
+        savedRecipeBut.setOnClickListener{
+            viewModel.getFavRecipes()
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_container, RecipeListFragment.newInstance(), MainActivity.savedRecipeFragTag)
+                .addToBackStack(MainActivity.mainFragTag)
+                .commit()
         }
 
         profileBut.setOnClickListener{
@@ -88,8 +97,12 @@ class MainFragment : Fragment() {
                     .commit()
         }
 
-        settingsBut.setOnClickListener{
-
+        shoppingCartBut.setOnClickListener{
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_container, ShoppingCartFragment.newInstance())
+                .addToBackStack(MainActivity.mainFragTag)
+                .commit()
         }
 
         logoutBut.setOnClickListener{

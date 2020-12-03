@@ -1,4 +1,4 @@
-package edu.utap.nutrino.ui.RecipeList
+package edu.utap.nutrino.ui.ShoppingCart
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,39 +8,28 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.R
-import android.util.Log
 import edu.utap.nutrino.ui.MainViewModel
 import kotlinx.android.synthetic.main.single_rv_frag.*
 
-class RecipeListFragment : Fragment() {
+class ShoppingCartFragment : Fragment() {
 
     private val viewModel : MainViewModel by activityViewModels()
-    private lateinit var adapter: RecipeListAdapter
+    private lateinit var adapter : ShoppingCartAdapter
 
     companion object {
-        fun newInstance() : RecipeListFragment {
-            return RecipeListFragment()
+        fun newInstance() : ShoppingCartFragment {
+            return ShoppingCartFragment()
         }
     }
 
     private fun initAdapter(view: View) {
-        adapter = RecipeListAdapter(viewModel)
+        adapter = ShoppingCartAdapter(viewModel)
         recipe_list_RV.adapter = adapter
         recipe_list_RV.layoutManager = LinearLayoutManager(view.context)
-        if (this.tag == MainActivity.recipeResultsFragTag) {
-            viewModel.observeRecipes().observe(viewLifecycleOwner, Observer {
-                adapter.submitList(it)
-            })
-        }
-        else if (this.tag == MainActivity.savedRecipeFragTag) {
-            viewModel.observeSavedRecipes().observe(viewLifecycleOwner, Observer {
-                adapter.submitList(it)
-            })
-        }
-
-        Log.i("TAG USED: ", this.tag.toString())
+        viewModel.observeShoppingCart().observe(viewLifecycleOwner, Observer {
+            adapter.addAll(it)
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
