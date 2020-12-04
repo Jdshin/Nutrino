@@ -5,11 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Property
+import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.firebase.ui.auth.AuthUI
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.utap.nutrino.ui.MainFragment
 import java.util.*
 import edu.utap.nutrino.SecretsManager.Companion.spoonacular_api_key
+import java.lang.System.exit
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,12 +31,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var mainFragment: MainFragment
-    private lateinit var sm: SecretsManager
+    private var sm: SecretsManager = SecretsManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        doSignIn()
+        Thread.setDefaultUncaughtExceptionHandler(GeneralExceptionHandler(this))
+
+        if (!sm.getBoolFromKey("exceptionHit", this)) {
+            doSignIn()
+        }
+
+        else {
+            Toast.makeText(this, "Crash encountered. Please sign in again.", Toast.LENGTH_SHORT).show()
+            supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            sm.setKBoolPair("exceptionHit", false, this) // Reset to false since exception has been handled
+            doSignIn()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -42,7 +57,6 @@ class MainActivity : AppCompatActivity() {
             userAuthRequestCode -> {
                 if (resultCode == RESULT_OK) {
                     Log.i("User Email: ", userEmail)
-                    sm = SecretsManager()
                     spoonApiKey = sm.getValueFromKey(spoonacular_api_key, applicationContext)
                     if (spoonApiKey != "") {
                         mainFragment = MainFragment.newInstance()
@@ -51,8 +65,10 @@ class MainActivity : AppCompatActivity() {
                     else {
                         fetchKeyFromDb(spoonacular_api_key)
                     }
-                } else {
+                }
+                else {
                     Log.d(javaClass.simpleName, "The sign-in stage failed.")
+                    finish()
                 }
             }
         }

@@ -30,19 +30,24 @@ class SecretsManager {
             )
         }
 
-        if (sharedPrefs!!.contains(theKey)) {
+        return sharedPrefs!!.getString(theKey, "")!!
+    }
 
+    // Starter code from here:  https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
+    fun getBoolFromKey(theKey: String, context: Context): Boolean {
+        if (masterKeyAlias == null) {
+            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 
-
-            // Test the validity of the key (it may be stale) to determine whether or not to re-fetch from DB
-
-
-            // Key is fresh so we're good to go!
-            return sharedPrefs!!.getString(theKey, "")!!
+            sharedPrefs= EncryptedSharedPreferences.create(
+                "secret_shared_prefs",
+                masterKeyAlias!!,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
         }
-        else {
-            return ""
-        }
+
+        return sharedPrefs!!.getBoolean(theKey, false)!!
     }
 
     // Starter code from here:  https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
@@ -59,5 +64,36 @@ class SecretsManager {
             )
         }
         sharedPrefs!!.edit().putString(theKey, theValue).commit()
+    }
+
+    // Starter code from here:  https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
+    fun setKBoolPair(theKey: String, theValue: Boolean, context: Context) {
+        if (masterKeyAlias == null) {
+            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+
+            sharedPrefs = EncryptedSharedPreferences.create(
+                "secret_shared_prefs",
+                masterKeyAlias!!,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        }
+        sharedPrefs!!.edit().putBoolean(theKey, theValue).commit()
+    }
+
+    fun clearSharedPrefs(context: Context) {
+        if (masterKeyAlias == null) {
+            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+
+            sharedPrefs = EncryptedSharedPreferences.create(
+                "secret_shared_prefs",
+                masterKeyAlias!!,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        }
+        sharedPrefs!!.edit().clear().commit()
     }
 }

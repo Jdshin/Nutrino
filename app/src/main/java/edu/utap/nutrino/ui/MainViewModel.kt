@@ -162,27 +162,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun netUserProfile() {
-        viewModelScope.launch (viewModelScope.coroutineContext + Dispatchers.IO) {
-            val query = db.collection("UserData")
-                    .document(MainActivity.userEmail)
-                    .collection("UserDiet")
-                    .document("UserDiet")
-                    .get()
-            query.addOnSuccessListener {
-                var userProfile = it.data!!
-                userDietType = userProfile["dietType"] as String
-                userProfile.remove("dietType")
-
-                for (key in userProfile.keys) {
-                    if (userProfile[key] as Boolean) {
-                        userProfileIntolList.add(key)
-                    }
-                }
-            }
-        }
-    }
-
     fun setOneRecipe(recipe : Recipe) {
         oneRecipe = recipe
     }

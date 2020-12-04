@@ -54,7 +54,6 @@ class MainFragment : Fragment() {
         }
 
         viewModel.initFireBaseRefs()
-        viewModel.netUserProfile()
         viewModel.netShoppingCart()
 
         val getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
