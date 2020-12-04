@@ -50,11 +50,12 @@ class MainFragment : Fragment() {
       
         if (MainActivity.userEmail.isNotEmpty()) {
             var userPostData = SpoonApi.UserPostData(MainActivity.userEmail)
-            viewModel.connectUser(userPostData, MainActivity.spoonApiKey)
+            //viewModel.connectUser(userPostData, MainActivity.spoonApiKey)
         }
 
         viewModel.initFireBaseRefs()
         viewModel.netUserProfile()
+        viewModel.netShoppingCart()
 
         val getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
         val savedRecipeBut = view.findViewById<Button>(R.id.savedRecipeBut)

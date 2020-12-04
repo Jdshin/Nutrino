@@ -27,6 +27,7 @@ class ShoppingCartFragment : Fragment() {
         adapter = ShoppingCartAdapter(viewModel)
         recipe_list_RV.adapter = adapter
         recipe_list_RV.layoutManager = LinearLayoutManager(view.context)
+        viewModel.updateShoppingList()
         viewModel.observeShoppingCart().observe(viewLifecycleOwner, Observer {
             adapter.addAll(it)
         })

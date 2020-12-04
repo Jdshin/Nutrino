@@ -31,7 +31,7 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
         fun bind (recipe : Recipe) {
 
             val savedRecipes = viewModel.observeSavedRecipes().value
-            val shoppingCartMap = viewModel.observeShoppingCartListMap()
+            val shoppingCartRecipes = viewModel.observeShoppingCartRecipes().value
 
             recipeTitleTV.text = recipe.title
 
@@ -41,7 +41,7 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
                 recipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
             }
 
-            if (shoppingCartMap.keys.contains(recipe.key.toString())) {
+            if (shoppingCartRecipes != null && shoppingCartRecipes.contains(recipe)) {
                 recipeCartIV.setImageResource(R.drawable.ic_check_mark)
             } else {
                 recipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
@@ -66,7 +66,7 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
             }
 
             recipeCartIV.setOnClickListener{
-                if (shoppingCartMap.keys.contains(recipe.key.toString())) {
+                if (shoppingCartRecipes != null && shoppingCartRecipes.contains(recipe)) {
                     viewModel.removeFromShoppingCart(recipe)
                     recipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
                     Toast.makeText(recipeCartIV.context, "Recipe removed from shopping cart", Toast.LENGTH_LONG).show()
@@ -76,6 +76,7 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
                     recipeCartIV.setImageResource(R.drawable.ic_check_mark)
                     Toast.makeText(recipeCartIV.context, "Recipe added to shopping cart", Toast.LENGTH_LONG).show()
                 }
+                viewModel.updateShoppingList()
             }
         }
     }

@@ -22,7 +22,8 @@ class MainViewModel : ViewModel() {
     private val savedRecipeResults = MutableLiveData<List<Recipe>>()
 
     private val shoppingCart = MutableLiveData<List<String>>()
-    private val shoppingCartList = mutableListOf<String>()
+    private var shoppingCartList = mutableListOf<String>()
+    private val shoppingCartRecipes = MutableLiveData<List<Recipe>>()
     private val shoppingCartListMap = mutableMapOf<String, List<RecipeIngredient>>()
 
     private var userProfileIntolList = mutableListOf<String>()
@@ -97,35 +98,68 @@ class MainViewModel : ViewModel() {
     }
 
     fun addToShoppingCart(recipe: Recipe) {
-        shoppingCartListMap[recipe.key.toString()] = recipe.nutrition!!.ingredients!!
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            userDocRef.collection("ShoppingCart").document(recipe.key.toString()).set(recipe)
+        }
     }
 
     fun removeFromShoppingCart(recipe: Recipe) {
-        shoppingCartListMap.remove(recipe.key.toString())
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            userDocRef.collection("ShoppingCart").document(recipe.key.toString()).delete()
+        }
     }
 
-    fun updateShoppingCart() {
+    fun netShoppingCart() {
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            if (FirebaseAuth.getInstance().currentUser == null) {
+                shoppingCartRecipes.value = listOf()
+            }
+            else {
+                db.collection("UserData").document(MainActivity.userEmail)
+                    .collection("ShoppingCart")
+                    .limit(50)
+                    .addSnapshotListener{ querySnapshot, ex ->
+                        if (ex != null) {
+                            return@addSnapshotListener
+                        }
+                        else {
+                            shoppingCartRecipes.value = querySnapshot!!.documents.mapNotNull {
+                                it.toObject(Recipe::class.java)
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    fun updateShoppingList() {
+        Log.i("UPDATING SHOPPING CART LIST: ", " OK")
         shoppingCartList.clear()
-        shoppingCartListMap.values.forEach { list ->
-            list.map { ingredient ->
-                if (!shoppingCartList.contains(ingredient.name)) {
-                    ingredient.name?.let { shoppingCartList.add(it) }
-                    shoppingCart.postValue(shoppingCartList)
+        if (shoppingCartRecipes.value != null) {
+            shoppingCartRecipes.value?.forEach {recipe ->
+                Log.i("RECIPE KEY: ", recipe.key.toString())
+                recipe.nutrition!!.ingredients!!.forEach {recipeIngredient ->
+                    Log.i("RECIPE INGREDIENT: ", recipeIngredient.name.toString())
+                    if (!shoppingCartList.contains(recipeIngredient.name)) {
+                        shoppingCartList.add(recipeIngredient.name!!)
+                    }
                 }
             }
         }
-        db.collection("UserData")
-                .document(MainActivity.userEmail)
-                .collection("ShoppingCart")
-                .document()
-                .set(shoppingCartListMap)
+        Log.i("SHOPPING CART LIST: ", shoppingCartList.toString())
+        shoppingCart.value = shoppingCartList
+        Log.i("SHOPPING CART LIVE DATA: ", shoppingCart.value.toString())
     }
 
     //TODO implement button in shopping cart fragment to clear all items in cart
     fun clearShoppingCart() {
-        shoppingCartListMap.clear()
-        shoppingCartList.clear()
-        shoppingCart.postValue(shoppingCartList)
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            if (shoppingCartRecipes.value != null) {
+                for (recipe in shoppingCartRecipes.value!!) {
+                    userDocRef.collection("ShoppingCart").document(recipe.key.toString()).delete()
+                }
+            }
+        }
     }
 
     fun netUserProfile() {
@@ -161,8 +195,8 @@ class MainViewModel : ViewModel() {
         return shoppingCart
     }
 
-    fun observeShoppingCartListMap() : Map<String, List<RecipeIngredient>>{
-        return shoppingCartListMap
+    fun observeShoppingCartRecipes() : LiveData<List<Recipe>>{
+        return shoppingCartRecipes
     }
 
     fun observeSavedRecipes() : LiveData<List<Recipe>> {

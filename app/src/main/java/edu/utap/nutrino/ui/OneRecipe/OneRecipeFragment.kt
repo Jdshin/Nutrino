@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.api.Distribution
 import edu.utap.nutrino.R
 import edu.utap.nutrino.glide.Glide
 import edu.utap.nutrino.ui.MainViewModel
@@ -44,7 +43,7 @@ class OneRecipeFragment : Fragment() {
 
         val oneRecipe = viewModel.getOneRecipe()
         val savedRecipes = viewModel.observeSavedRecipes().value
-        val shoppingCartMap = viewModel.observeShoppingCartListMap()
+        val shoppingCartRecipes = viewModel.observeShoppingCartRecipes().value
         initAdapters(view)
 
         one_recipe_title_TV.text = oneRecipe.title
@@ -52,6 +51,18 @@ class OneRecipeFragment : Fragment() {
         one_recipe_ready_time_TV.text = "Cook Time${"\n"}${oneRecipe.readyInMinutes.toString()} minutes"
         if (oneRecipe.imageURL != null) {
             Glide.glideFetch(oneRecipe.imageURL, one_recipe_IV)
+        }
+
+        if (savedRecipes != null && savedRecipes.contains(oneRecipe)) {
+            oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+        } else {
+            oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+        }
+
+        if (shoppingCartRecipes != null && shoppingCartRecipes.contains(oneRecipe)) {
+            oneRecipeCartIV.setImageResource(R.drawable.ic_check_mark)
+        } else {
+            oneRecipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
         }
 
         oneRecipeFavIV.setOnClickListener{
@@ -67,7 +78,7 @@ class OneRecipeFragment : Fragment() {
         }
 
         oneRecipeCartIV.setOnClickListener{
-            if (shoppingCartMap.keys.contains(oneRecipe.key)) {
+            if (shoppingCartRecipes != null && shoppingCartRecipes.contains(oneRecipe)) {
                 viewModel.removeFromShoppingCart(oneRecipe)
                 oneRecipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
             }
@@ -75,7 +86,7 @@ class OneRecipeFragment : Fragment() {
                 viewModel.addToShoppingCart(oneRecipe)
                 oneRecipeCartIV.setImageResource(R.drawable.ic_check_mark)
             }
-            viewModel.updateShoppingCart()
+            viewModel.updateShoppingList()
         }
 
         adapterIngredientsAdapter.submitList(oneRecipe.nutrition!!.ingredients)
