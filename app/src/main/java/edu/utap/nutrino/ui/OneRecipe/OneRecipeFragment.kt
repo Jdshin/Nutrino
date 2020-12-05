@@ -90,7 +90,9 @@ class OneRecipeFragment : Fragment() {
         }
 
         adapterIngredientsAdapter.submitList(oneRecipe.nutrition!!.ingredients)
-        adapterInstructionsAdapter.submitList(oneRecipe.analyzedInstructions?.get(0)?.recipeSteps)
+        if (oneRecipe.analyzedInstructions != null && oneRecipe.analyzedInstructions.isNotEmpty()) {
+            adapterInstructionsAdapter.submitList(oneRecipe.analyzedInstructions?.get(0)?.recipeSteps)
+        }
     }
 
     private fun initAdapters(view: View) {
