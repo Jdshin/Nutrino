@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="30sp"
-        android:textColor="#FF0000"
+        android:textColor="#006400"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/getRecipeBut"
@@ -60,10 +60,10 @@
         android:layout_height="wrap_content"
         android:text="Log Out"
         android:id="@+id/logoutBut"
+        android:backgroundTint="@android:color/holo_red_light"
         app:layout_constraintTop_toBottomOf="@+id/shoppingCartBut"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

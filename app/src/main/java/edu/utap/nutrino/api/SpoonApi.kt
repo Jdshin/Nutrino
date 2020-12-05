@@ -1,6 +1,5 @@
 package edu.utap.nutrino.api
 
-import android.net.wifi.hotspot2.pps.Credential
 import com.google.gson.annotations.SerializedName
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient

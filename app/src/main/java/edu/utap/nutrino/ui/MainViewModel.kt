@@ -1,15 +1,16 @@
 package edu.utap.nutrino.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.api.*
+import edu.utap.nutrino.ui.ShoppingCart.ShoppingCartAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -21,9 +22,12 @@ class MainViewModel : ViewModel() {
     private val recipeResults = MutableLiveData<List<Recipe>>()
     private val savedRecipeResults = MutableLiveData<List<Recipe>>()
 
-    private val shoppingCart = MutableLiveData<List<String>>()
-    private val shoppingCartList = mutableListOf<String>()
-    private val shoppingCartListMap = mutableMapOf<String, List<RecipeIngredient>>()
+    private val shoppingCartIngredients = MutableLiveData<List<String>>()
+    private val shoppingCartRecipes = MutableLiveData<List<Recipe>>()
+
+    private var savedRecipesList = mutableListOf<Recipe>()
+    private var shoppingCartList = mutableListOf<String>()
+    private var shoppingCartRecipesList = mutableListOf<Recipe>()
 
     private var userProfileIntolList = mutableListOf<String>()
     private var userDietType : String? = null
@@ -47,15 +51,12 @@ class MainViewModel : ViewModel() {
             var userEmailMap = hashMapOf<String, String>("email" to body.email)
             userDocRef.set(userEmailMap)
             userDocRef.collection("UserCred").document("UserCred").set(userCreds)
-            Log.i("Username: ", userCreds.username)
-            Log.i("Hash: ", userCreds.hash)
         }
     }
 
     fun netRecipes(apiKey : String, searchText: String) {
         viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
             var userIntoleranceStr = userProfileIntolList.joinToString(",")
-            Log.i("Net Recipes: ", userIntoleranceStr)
             recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "5", searchText, userDietType, userIntoleranceStr))
         }
     }
@@ -63,85 +64,107 @@ class MainViewModel : ViewModel() {
     fun addFavRecipe(recipe : Recipe) {
         viewModelScope.launch (viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("FavoriteRecipes").document(recipe.key.toString()).set(recipe)
+            savedRecipesList.add(recipe)
+            savedRecipeResults.postValue(savedRecipesList)
         }
     }
 
     fun removeFavRecipe(recipe: Recipe) {
         viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("FavoriteRecipes").document(recipe.key.toString()).delete()
+            savedRecipesList.remove(recipe)
+            savedRecipeResults.postValue(savedRecipesList)
         }
     }
 
     fun getFavRecipes() {
-        if (FirebaseAuth.getInstance().currentUser == null) {
-            savedRecipeResults.value = listOf()
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            if (FirebaseAuth.getInstance().currentUser == null) {
+                savedRecipeResults.value = listOf()
+            }
+            else {
+                db.collection("UserData")
+                        .document(MainActivity.userEmail)
+                        .collection("FavoriteRecipes")
+                        .limit(50)
+                        .addSnapshotListener{ querySnapshot, ex ->
+                            if (ex != null) {
+                                return@addSnapshotListener
+                            }
+                            else {
+                                savedRecipesList = querySnapshot!!.documents.mapNotNull {
+                                    it.toObject(Recipe::class.java)
+                                } as MutableList<Recipe>
+                                savedRecipeResults.postValue(savedRecipesList)
+                            }
+                        }
+            }
         }
-        else {
-            db.collection("UserData")
-                    .document(MainActivity.userEmail)
-                    .collection("FavoriteRecipes")
+    }
+
+    fun addToShoppingCart(recipe: Recipe) {
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            userDocRef.collection("ShoppingCart").document(recipe.key.toString()).set(recipe)
+            shoppingCartRecipesList.add(recipe)
+            shoppingCartRecipes.postValue(shoppingCartRecipesList)
+        }
+    }
+
+    fun removeFromShoppingCart(recipe: Recipe) {
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            userDocRef.collection("ShoppingCart").document(recipe.key.toString()).delete()
+            shoppingCartRecipesList.remove(recipe)
+            shoppingCartRecipes.postValue(shoppingCartRecipesList)
+        }
+    }
+
+    fun netShoppingCart() {
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            if (FirebaseAuth.getInstance().currentUser == null) {
+                shoppingCartRecipes.value = listOf()
+            }
+            else {
+                db.collection("UserData").document(MainActivity.userEmail)
+                    .collection("ShoppingCart")
                     .limit(50)
                     .addSnapshotListener{ querySnapshot, ex ->
                         if (ex != null) {
                             return@addSnapshotListener
                         }
                         else {
-                            savedRecipeResults.value = querySnapshot!!.documents.mapNotNull {
+                            shoppingCartRecipesList = querySnapshot!!.documents.mapNotNull {
                                 it.toObject(Recipe::class.java)
-                            }
+                            } as MutableList<Recipe>
                         }
                     }
+            }
         }
     }
 
-    fun addToShoppingCart(recipe: Recipe) {
-        shoppingCartListMap[recipe.key.toString()] = recipe.nutrition!!.ingredients!!
-    }
-
-    fun removeFromShoppingCart(recipe: Recipe) {
-        shoppingCartListMap.remove(recipe.key.toString())
-    }
-
-    fun updateShoppingCart() {
+    fun updateShoppingList() {
         shoppingCartList.clear()
-        shoppingCartListMap.values.forEach { list ->
-            list.map { ingredient ->
-                if (!shoppingCartList.contains(ingredient.name)) {
-                    ingredient.name?.let { shoppingCartList.add(it) }
-                    shoppingCart.postValue(shoppingCartList)
+        if (shoppingCartRecipesList != null) {
+            shoppingCartRecipesList.forEach {recipe ->
+                recipe.nutrition!!.ingredients!!.forEach {recipeIngredient ->
+                    if (!shoppingCartList.contains(recipeIngredient.name)) {
+                        shoppingCartList.add(recipeIngredient.name!!)
+                    }
                 }
             }
         }
-        db.collection("UserData")
-                .document(MainActivity.userEmail)
-                .collection("ShoppingCart")
-                .document()
-                .set(shoppingCartListMap)
+        shoppingCartIngredients.value = shoppingCartList
     }
 
     //TODO implement button in shopping cart fragment to clear all items in cart
     fun clearShoppingCart() {
-        shoppingCartListMap.clear()
-        shoppingCartList.clear()
-        shoppingCart.postValue(shoppingCartList)
-    }
-
-    fun netUserProfile() {
-        viewModelScope.launch (viewModelScope.coroutineContext + Dispatchers.IO) {
-            val query = db.collection("UserData")
-                    .document(MainActivity.userEmail)
-                    .collection("UserDiet")
-                    .document("UserDiet")
-                    .get()
-            query.addOnSuccessListener {
-                var userProfile = it.data!!
-                userDietType = userProfile["dietType"] as String
-                userProfile.remove("dietType")
-
-                for (key in userProfile.keys) {
-                    if (userProfile[key] as Boolean) {
-                        userProfileIntolList.add(key)
-                    }
+        Log.i("ShoppinCartRecipes Size: ", shoppingCartRecipesList.size.toString())
+        Log.i("Shopping cart ingredients: ", shoppingCartList.size.toString())
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
+            for (recipe in shoppingCartRecipesList) {
+                userDocRef.collection("ShoppingCart").document(recipe.key.toString()).delete().addOnCompleteListener{
+                    shoppingCartRecipesList.clear()
+                    shoppingCartList.clear()
+                    shoppingCartIngredients.postValue(shoppingCartList)
                 }
             }
         }
@@ -156,11 +179,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun observeShoppingCart() : LiveData<List<String>> {
-        return shoppingCart
-    }
-
-    fun observeShoppingCartListMap() : Map<String, List<RecipeIngredient>>{
-        return shoppingCartListMap
+        return shoppingCartIngredients
     }
 
     fun observeSavedRecipes() : LiveData<List<Recipe>> {
@@ -169,5 +188,13 @@ class MainViewModel : ViewModel() {
 
     fun observeRecipes() : LiveData<List<Recipe>>{
         return recipeResults
+    }
+
+    fun recipeInSavedList(recipe: Recipe) : Boolean {
+        return savedRecipesList.contains(recipe)
+    }
+
+    fun recipeInShoppingCart(recipe: Recipe) : Boolean {
+        return shoppingCartRecipesList.contains(recipe)
     }
 }

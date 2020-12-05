@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.api.Distribution
 import edu.utap.nutrino.R
 import edu.utap.nutrino.glide.Glide
 import edu.utap.nutrino.ui.MainViewModel
@@ -43,8 +41,6 @@ class OneRecipeFragment : Fragment() {
         val oneRecipeCartIV = view.findViewById<ImageView>(R.id.one_recipe_cart_but)
 
         val oneRecipe = viewModel.getOneRecipe()
-        val savedRecipes = viewModel.observeSavedRecipes().value
-        val shoppingCartMap = viewModel.observeShoppingCartListMap()
         initAdapters(view)
 
         one_recipe_title_TV.text = oneRecipe.title
@@ -54,32 +50,49 @@ class OneRecipeFragment : Fragment() {
             Glide.glideFetch(oneRecipe.imageURL, one_recipe_IV)
         }
 
+        if (viewModel.recipeInSavedList(recipe = oneRecipe)) {
+            oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+        } else {
+            oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+        }
+
+        if (viewModel.recipeInShoppingCart(oneRecipe)) {
+            oneRecipeCartIV.setImageResource(R.drawable.ic_check_mark)
+        } else {
+            oneRecipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
+        }
+
         oneRecipeFavIV.setOnClickListener{
-            if (savedRecipes != null && !savedRecipes.contains(oneRecipe)) {
-                viewModel.addFavRecipe(oneRecipe)
-                oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
-            }
-            else {
+            if (viewModel.recipeInSavedList(oneRecipe)) {
                 viewModel.removeFavRecipe(oneRecipe)
                 oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                Toast.makeText(this.context, "Recipe unsaved", Toast.LENGTH_SHORT).show()
             }
-            viewModel.getFavRecipes()
+            else {
+                viewModel.addFavRecipe(oneRecipe)
+                oneRecipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
+                Toast.makeText(this.context, "Recipe saved", Toast.LENGTH_SHORT).show()
+            }
         }
 
         oneRecipeCartIV.setOnClickListener{
-            if (shoppingCartMap.keys.contains(oneRecipe.key)) {
+            if (viewModel.recipeInShoppingCart(oneRecipe)) {
                 viewModel.removeFromShoppingCart(oneRecipe)
                 oneRecipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
+                Toast.makeText(this.context, "Recipe removed from cart", Toast.LENGTH_SHORT).show()
             }
             else {
                 viewModel.addToShoppingCart(oneRecipe)
                 oneRecipeCartIV.setImageResource(R.drawable.ic_check_mark)
+                Toast.makeText(this.context, "Recipe added to cart", Toast.LENGTH_SHORT).show()
             }
-            viewModel.updateShoppingCart()
+            viewModel.updateShoppingList()
         }
 
         adapterIngredientsAdapter.submitList(oneRecipe.nutrition!!.ingredients)
-        adapterInstructionsAdapter.submitList(oneRecipe.analyzedInstructions?.get(0)?.recipeSteps)
+        if (oneRecipe.analyzedInstructions != null && oneRecipe.analyzedInstructions.isNotEmpty()) {
+            adapterInstructionsAdapter.submitList(oneRecipe.analyzedInstructions?.get(0)?.recipeSteps)
+        }
     }
 
     private fun initAdapters(view: View) {
