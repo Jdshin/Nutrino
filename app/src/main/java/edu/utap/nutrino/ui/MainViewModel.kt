@@ -1,15 +1,16 @@
 package edu.utap.nutrino.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.utap.nutrino.MainActivity
 import edu.utap.nutrino.api.*
+import edu.utap.nutrino.ui.ShoppingCart.ShoppingCartAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -21,11 +22,11 @@ class MainViewModel : ViewModel() {
     private val recipeResults = MutableLiveData<List<Recipe>>()
     private val savedRecipeResults = MutableLiveData<List<Recipe>>()
 
-    private val shoppingCart = MutableLiveData<List<String>>()
-    private var shoppingCartList = mutableListOf<String>()
+    private val shoppingCartIngredients = MutableLiveData<List<String>>()
     private val shoppingCartRecipes = MutableLiveData<List<Recipe>>()
 
     private var savedRecipesList = mutableListOf<Recipe>()
+    private var shoppingCartList = mutableListOf<String>()
     private var shoppingCartRecipesList = mutableListOf<Recipe>()
 
     private var userProfileIntolList = mutableListOf<String>()
@@ -151,15 +152,19 @@ class MainViewModel : ViewModel() {
                 }
             }
         }
-        shoppingCart.value = shoppingCartList
+        shoppingCartIngredients.value = shoppingCartList
     }
 
     //TODO implement button in shopping cart fragment to clear all items in cart
     fun clearShoppingCart() {
+        Log.i("ShoppinCartRecipes Size: ", shoppingCartRecipesList.size.toString())
+        Log.i("Shopping cart ingredients: ", shoppingCartList.size.toString())
         viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
-            if (shoppingCartRecipes.value != null) {
-                for (recipe in shoppingCartRecipes.value!!) {
-                    userDocRef.collection("ShoppingCart").document(recipe.key.toString()).delete()
+            for (recipe in shoppingCartRecipesList) {
+                userDocRef.collection("ShoppingCart").document(recipe.key.toString()).delete().addOnCompleteListener{
+                    shoppingCartRecipesList.clear()
+                    shoppingCartList.clear()
+                    shoppingCartIngredients.postValue(shoppingCartList)
                 }
             }
         }
@@ -174,11 +179,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun observeShoppingCart() : LiveData<List<String>> {
-        return shoppingCart
-    }
-
-    fun observeShoppingCartRecipes() : LiveData<List<Recipe>>{
-        return shoppingCartRecipes
+        return shoppingCartIngredients
     }
 
     fun observeSavedRecipes() : LiveData<List<Recipe>> {

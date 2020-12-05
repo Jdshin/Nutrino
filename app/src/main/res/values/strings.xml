@@ -3,4 +3,5 @@
     <string name="intoleranceString">dairy,egg,gluten,grain,peanut,seafood,sesame,shellfish,soy,sulfite,tree nut,wheat</string>
     <string name="ingredientsTVString">Ingredients</string>
     <string name="instructionTVString">Instructions</string>
+    <string name="clear_cart">Clear Cart</string>
 </resources>
