@@ -55,12 +55,12 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
                 if (savedRecipes != null && !savedRecipes.contains(recipe)) {
                     viewModel.addFavRecipe(recipe)
                     recipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
-                    Toast.makeText(recipeFavIV.context, "Recipe saved", Toast.LENGTH_LONG).show()
+                    Toast.makeText(recipeFavIV.context, "Recipe saved", Toast.LENGTH_SHORT).show()
                 }
                 else {
                     viewModel.removeFavRecipe(recipe)
                     recipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
-                    Toast.makeText(recipeFavIV.context, "Recipe unsaved", Toast.LENGTH_LONG).show()
+                    Toast.makeText(recipeFavIV.context, "Recipe unsaved", Toast.LENGTH_SHORT).show()
                 }
                 viewModel.getFavRecipes()
             }
@@ -69,12 +69,12 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
                 if (shoppingCartRecipes != null && shoppingCartRecipes.contains(recipe)) {
                     viewModel.removeFromShoppingCart(recipe)
                     recipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
-                    Toast.makeText(recipeCartIV.context, "Recipe removed from shopping cart", Toast.LENGTH_LONG).show()
+                    Toast.makeText(recipeCartIV.context, "Recipe removed from shopping cart", Toast.LENGTH_SHORT).show()
                 }
                 else {
                     viewModel.addToShoppingCart(recipe)
                     recipeCartIV.setImageResource(R.drawable.ic_check_mark)
-                    Toast.makeText(recipeCartIV.context, "Recipe added to shopping cart", Toast.LENGTH_LONG).show()
+                    Toast.makeText(recipeCartIV.context, "Recipe added to shopping cart", Toast.LENGTH_SHORT).show()
                 }
                 viewModel.updateShoppingList()
             }

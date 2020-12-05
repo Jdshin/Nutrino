@@ -21,7 +21,8 @@ class ShoppingCartAdapter(private val viewModel: MainViewModel)
         private val ingredient_TV = itemView.findViewById<TextView>(R.id.one_recipe_step_TV)
 
         fun bind (ingredientName: String) {
-            ingredient_TV.text = ingredientName
+            var ingredientNameCapitalized = ingredientName.substring(0,1).toUpperCase() + ingredientName.substring(1)
+            ingredient_TV.text = ingredientNameCapitalized
         }
     }
 

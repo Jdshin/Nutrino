@@ -38,7 +38,6 @@ class RecipeSearchFragment : Fragment() {
 
     private fun setRecipeSearchBut(editText: EditText, button: Button) {
         button.setOnClickListener{
-            Log.i("Search Text: ", editText.text.toString())
             viewModel.netRecipes(MainActivity.spoonApiKey, editText.text.toString())
             parentFragmentManager
                     .beginTransaction()

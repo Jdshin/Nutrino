@@ -48,15 +48,12 @@ class MainViewModel : ViewModel() {
             var userEmailMap = hashMapOf<String, String>("email" to body.email)
             userDocRef.set(userEmailMap)
             userDocRef.collection("UserCred").document("UserCred").set(userCreds)
-            Log.i("Username: ", userCreds.username)
-            Log.i("Hash: ", userCreds.hash)
         }
     }
 
     fun netRecipes(apiKey : String, searchText: String) {
         viewModelScope.launch (context = viewModelScope.coroutineContext + Dispatchers.IO) {
             var userIntoleranceStr = userProfileIntolList.joinToString(",")
-            Log.i("Net Recipes: ", userIntoleranceStr)
             recipeResults.postValue(repository.getRecipeEndpoint(apiKey, "5", searchText, userDietType, userIntoleranceStr))
         }
     }
@@ -133,22 +130,17 @@ class MainViewModel : ViewModel() {
     }
 
     fun updateShoppingList() {
-        Log.i("UPDATING SHOPPING CART LIST: ", " OK")
         shoppingCartList.clear()
         if (shoppingCartRecipes.value != null) {
             shoppingCartRecipes.value?.forEach {recipe ->
-                Log.i("RECIPE KEY: ", recipe.key.toString())
                 recipe.nutrition!!.ingredients!!.forEach {recipeIngredient ->
-                    Log.i("RECIPE INGREDIENT: ", recipeIngredient.name.toString())
                     if (!shoppingCartList.contains(recipeIngredient.name)) {
                         shoppingCartList.add(recipeIngredient.name!!)
                     }
                 }
             }
         }
-        Log.i("SHOPPING CART LIST: ", shoppingCartList.toString())
         shoppingCart.value = shoppingCartList
-        Log.i("SHOPPING CART LIVE DATA: ", shoppingCart.value.toString())
     }
 
     //TODO implement button in shopping cart fragment to clear all items in cart

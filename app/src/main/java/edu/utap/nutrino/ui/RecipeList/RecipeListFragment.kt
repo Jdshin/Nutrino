@@ -39,8 +39,6 @@ class RecipeListFragment : Fragment() {
                 adapter.submitList(it)
             })
         }
-
-        Log.i("TAG USED: ", this.tag.toString())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
