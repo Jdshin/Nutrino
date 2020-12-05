@@ -55,6 +55,7 @@ class MainFragment : Fragment() {
 
         viewModel.initFireBaseRefs()
         viewModel.netShoppingCart()
+        viewModel.getFavRecipes()
 
         val getRecipeBut = view.findViewById<Button>(R.id.getRecipeBut)
         val savedRecipeBut = view.findViewById<Button>(R.id.savedRecipeBut)
