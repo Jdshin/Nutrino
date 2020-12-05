@@ -24,7 +24,9 @@ class MainViewModel : ViewModel() {
     private val shoppingCart = MutableLiveData<List<String>>()
     private var shoppingCartList = mutableListOf<String>()
     private val shoppingCartRecipes = MutableLiveData<List<Recipe>>()
-    private val shoppingCartListMap = mutableMapOf<String, List<RecipeIngredient>>()
+
+    private var savedRecipesList = mutableListOf<Recipe>()
+    private var shoppingCartRecipesList = mutableListOf<Recipe>()
 
     private var userProfileIntolList = mutableListOf<String>()
     private var userDietType : String? = null
@@ -61,12 +63,16 @@ class MainViewModel : ViewModel() {
     fun addFavRecipe(recipe : Recipe) {
         viewModelScope.launch (viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("FavoriteRecipes").document(recipe.key.toString()).set(recipe)
+            savedRecipesList.add(recipe)
+            savedRecipeResults.postValue(savedRecipesList)
         }
     }
 
     fun removeFavRecipe(recipe: Recipe) {
         viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("FavoriteRecipes").document(recipe.key.toString()).delete()
+            savedRecipesList.remove(recipe)
+            savedRecipeResults.postValue(savedRecipesList)
         }
     }
 
@@ -85,9 +91,10 @@ class MainViewModel : ViewModel() {
                                 return@addSnapshotListener
                             }
                             else {
-                                savedRecipeResults.value = querySnapshot!!.documents.mapNotNull {
+                                savedRecipesList = querySnapshot!!.documents.mapNotNull {
                                     it.toObject(Recipe::class.java)
-                                }
+                                } as MutableList<Recipe>
+                                savedRecipeResults.postValue(savedRecipesList)
                             }
                         }
             }
@@ -97,12 +104,16 @@ class MainViewModel : ViewModel() {
     fun addToShoppingCart(recipe: Recipe) {
         viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("ShoppingCart").document(recipe.key.toString()).set(recipe)
+            shoppingCartRecipesList.add(recipe)
+            shoppingCartRecipes.postValue(shoppingCartRecipesList)
         }
     }
 
     fun removeFromShoppingCart(recipe: Recipe) {
         viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO) {
             userDocRef.collection("ShoppingCart").document(recipe.key.toString()).delete()
+            shoppingCartRecipesList.remove(recipe)
+            shoppingCartRecipes.postValue(shoppingCartRecipesList)
         }
     }
 
@@ -120,9 +131,9 @@ class MainViewModel : ViewModel() {
                             return@addSnapshotListener
                         }
                         else {
-                            shoppingCartRecipes.value = querySnapshot!!.documents.mapNotNull {
+                            shoppingCartRecipesList = querySnapshot!!.documents.mapNotNull {
                                 it.toObject(Recipe::class.java)
-                            }
+                            } as MutableList<Recipe>
                         }
                     }
             }
@@ -131,8 +142,8 @@ class MainViewModel : ViewModel() {
 
     fun updateShoppingList() {
         shoppingCartList.clear()
-        if (shoppingCartRecipes.value != null) {
-            shoppingCartRecipes.value?.forEach {recipe ->
+        if (shoppingCartRecipesList != null) {
+            shoppingCartRecipesList.forEach {recipe ->
                 recipe.nutrition!!.ingredients!!.forEach {recipeIngredient ->
                     if (!shoppingCartList.contains(recipeIngredient.name)) {
                         shoppingCartList.add(recipeIngredient.name!!)
@@ -176,5 +187,13 @@ class MainViewModel : ViewModel() {
 
     fun observeRecipes() : LiveData<List<Recipe>>{
         return recipeResults
+    }
+
+    fun recipeInSavedList(recipe: Recipe) : Boolean {
+        return savedRecipesList.contains(recipe)
+    }
+
+    fun recipeInShoppingCart(recipe: Recipe) : Boolean {
+        return shoppingCartRecipesList.contains(recipe)
     }
 }

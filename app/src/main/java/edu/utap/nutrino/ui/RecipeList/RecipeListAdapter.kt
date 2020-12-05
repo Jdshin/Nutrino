@@ -30,18 +30,15 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
 
         fun bind (recipe : Recipe) {
 
-            val savedRecipes = viewModel.observeSavedRecipes().value
-            val shoppingCartRecipes = viewModel.observeShoppingCartRecipes().value
-
             recipeTitleTV.text = recipe.title
 
-            if (savedRecipes != null && savedRecipes.contains(recipe)) {
+            if (viewModel.recipeInSavedList(recipe)) {
                 recipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
             } else {
                 recipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
             }
 
-            if (shoppingCartRecipes != null && shoppingCartRecipes.contains(recipe)) {
+            if (viewModel.recipeInShoppingCart(recipe)) {
                 recipeCartIV.setImageResource(R.drawable.ic_check_mark)
             } else {
                 recipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
@@ -52,31 +49,28 @@ class RecipeListAdapter(private val viewModel: MainViewModel)
             }
 
             recipeFavIV.setOnClickListener{
-                if (savedRecipes != null && !savedRecipes.contains(recipe)) {
+                if (viewModel.recipeInSavedList(recipe)) {
+                    viewModel.removeFavRecipe(recipe)
+                    recipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                    Toast.makeText(recipeFavIV.context, "Recipe removed", Toast.LENGTH_SHORT).show()
+                }
+                else {
                     viewModel.addFavRecipe(recipe)
                     recipeFavIV.setImageResource(R.drawable.ic_favorite_black_24dp)
                     Toast.makeText(recipeFavIV.context, "Recipe saved", Toast.LENGTH_SHORT).show()
                 }
-                else {
-                    viewModel.removeFavRecipe(recipe)
-                    recipeFavIV.setImageResource(R.drawable.ic_favorite_border_black_24dp)
-                    Toast.makeText(recipeFavIV.context, "Recipe unsaved", Toast.LENGTH_SHORT).show()
-                }
-                viewModel.getFavRecipes()
             }
 
             recipeCartIV.setOnClickListener{
-                if (shoppingCartRecipes != null && shoppingCartRecipes.contains(recipe)) {
+                if (viewModel.recipeInShoppingCart(recipe)) {
                     viewModel.removeFromShoppingCart(recipe)
                     recipeCartIV.setImageResource(R.drawable.ic_shopping_cart_icon)
-                    Toast.makeText(recipeCartIV.context, "Recipe removed from shopping cart", Toast.LENGTH_SHORT).show()
-                }
-                else {
+                    Toast.makeText(recipeCartIV.context, "Recipe removed from cart", Toast.LENGTH_SHORT).show()
+                } else {
                     viewModel.addToShoppingCart(recipe)
                     recipeCartIV.setImageResource(R.drawable.ic_check_mark)
-                    Toast.makeText(recipeCartIV.context, "Recipe added to shopping cart", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(recipeCartIV.context, "Recipe added to cart", Toast.LENGTH_SHORT).show()
                 }
-                viewModel.updateShoppingList()
             }
         }
     }

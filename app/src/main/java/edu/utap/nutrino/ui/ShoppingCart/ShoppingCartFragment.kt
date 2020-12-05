@@ -30,6 +30,7 @@ class ShoppingCartFragment : Fragment() {
         viewModel.updateShoppingList()
         viewModel.observeShoppingCart().observe(viewLifecycleOwner, Observer {
             adapter.addAll(it)
+            adapter.notifyDataSetChanged()
         })
     }
 
