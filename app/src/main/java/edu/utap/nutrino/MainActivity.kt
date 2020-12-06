@@ -13,7 +13,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import edu.utap.nutrino.ui.MainFragment
 import java.util.*
 import edu.utap.nutrino.SecretsManager.Companion.spoonacular_api_key
-import edu.utap.nutrino.SecretsManager.Companion.spoonacular_api_key_3
 import java.lang.System.exit
 
 class MainActivity : AppCompatActivity() {
@@ -58,13 +57,13 @@ class MainActivity : AppCompatActivity() {
             userAuthRequestCode -> {
                 if (resultCode == RESULT_OK) {
                     Log.i("User Email: ", userEmail)
-                    spoonApiKey = sm.getValueFromKey(spoonacular_api_key_3, applicationContext)
+                    spoonApiKey = sm.getValueFromKey(spoonacular_api_key, applicationContext)
                     if (spoonApiKey != "") {
                         mainFragment = MainFragment.newInstance()
                         initMainFragment()
                     }
                     else {
-                        fetchKeyFromDb(spoonacular_api_key_3)
+                        fetchKeyFromDb(spoonacular_api_key)
                     }
                 }
                 else {
@@ -93,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         db.collection("Keys").document("ApiKeys").get()
             .addOnSuccessListener { result ->
                 Log.d("MainActivity", "Fetching key from DB succeeded.")
-                spoonApiKey = result.getString(spoonacular_api_key_3).toString()
+                spoonApiKey = result.getString(spoonacular_api_key).toString()
                 // Update EncryptedSharedPreferences
                 sm.setKvPair(key, spoonApiKey, this)
                 mainFragment = MainFragment.newInstance()
